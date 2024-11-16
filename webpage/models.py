@@ -25,7 +25,7 @@ class UserInfo(models.Model):
 class Session(models.Model):
     course = models.ForeignKey('Course', on_delete=models.CASCADE)
     course_date_time = models.DateTimeField()
-    course_description = models.TextField(null=True, blank=True)  # Making description optional
+    course_description = models.TextField(null=True, blank=True)
     start_date = models.DateField()
     end_date = models.DateField()
     location = models.CharField(max_length=255)
@@ -36,7 +36,7 @@ class Session(models.Model):
 
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
-    course_name = models.CharField(max_length=255)
+    course_name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.course_name
