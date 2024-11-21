@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Address(models.Model):
     address_id = models.AutoField(primary_key=True)
     street_address = models.CharField(max_length=255)
@@ -36,6 +37,7 @@ class Session(models.Model):
 
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
+    date = models.DateField(null=True, blank=True)
     course_name = models.CharField(max_length=200)
 
     def __str__(self):
@@ -45,8 +47,10 @@ class Course(models.Model):
 class Transaction(models.Model):
     transaction_id = models.AutoField(primary_key=True)
     session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
-    learner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='learner_transactions')
-    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_transactions')
+    learner = models.ForeignKey(User, on_delete=models.CASCADE,
+                                related_name='learner_transactions')
+    tutor = models.ForeignKey(User, on_delete=models.CASCADE,
+                              related_name='tutor_transactions')
     date = models.DateField()
     time = models.TimeField()
     duration = models.DurationField()

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Courses</title>
+</head>
+<body>
+    <header>
+        <h1>Available Courses</h1>
+    </header>
+    <main>
+        {% if courses %}
+            <ul>
+                {% for course in courses %}
+                    <li>
+                        <h2>{{ course.course_name }}</h2>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No courses are currently available.</p>
+        {% endif %}
+    </main>
+</body>
+</html>
