@@ -23,23 +23,23 @@ class UserInfo(models.Model):
 
 
 class Session(models.Model):
-    course = models.ForeignKey('Course', on_delete=models.CASCADE)
-    course_date_time = models.DateTimeField()
-    course_description = models.TextField(null=True, blank=True)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    session_date_time = models.DateTimeField()
+    session_description = models.TextField(null=True, blank=True)
     start_date = models.DateField()
     end_date = models.DateField()
     location = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.course} - {self.start_date} to {self.end_date}"
+        return f"{self.category} - {self.start_date} to {self.end_date}"
 
 
-class Course(models.Model):
-    course_id = models.AutoField(primary_key=True)
-    course_name = models.CharField(max_length=200)
+class Category(models.Model):
+    category_id = models.AutoField(primary_key=True)
+    category_name = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.course_name
+        return self.category_name
 
 
 class Transaction(models.Model):
@@ -70,7 +70,7 @@ class Enroll(models.Model):
 
 class Tutor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    teaching_interests = models.ManyToManyField(Course)
+    teaching_interests = models.ManyToManyField(Category)
 
     def __str__(self):
         return f"Tutor: {self.user.username}"
@@ -78,7 +78,7 @@ class Tutor(models.Model):
 
 class Learner(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    learning_interests = models.ManyToManyField(Course)
+    learning_interests = models.ManyToManyField(Category)
 
     def __str__(self):
         return f"Learner: {self.user.username}"
