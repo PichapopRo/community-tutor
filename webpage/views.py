@@ -20,10 +20,11 @@ class SessionCreateView(generic.CreateView):
     model = Session
     template_name = 'session_form.html'
     form_class = SessionForm
+    success_url = '/'
 
     def form_valid(self, form):
         print("Form is valid!")
-        return super().form_valid(form), redirect(reverse('session_list'))
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         print("Form is invalid!")
