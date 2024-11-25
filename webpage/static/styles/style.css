@@ -1,0 +1,19 @@
+.primary{
+    background-color: #2133A1;
+}
+.secondary{
+    color: #EC2A5F;
+}
+.navbar{
+    background-color: #001429;
+    color: #EFF3F5;
+}
+body{
+    background-color: #EFF3F5;
+}
+.success{
+    color: #30CB83;
+}
+i{
+    font-size: 24px;
+}

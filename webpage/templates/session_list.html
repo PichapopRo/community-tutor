@@ -1,16 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div class="container mx-3 my-3">
   <h1>Available Sessions</h1>
-  <a href="{% url 'session-create' %}" class="btn btn-primary mb-3">Create New Session</a>
-
-  {% if sessions %}
-    <ul>
-      {% for session in sessions %}
-        <li>{{ session.category }}: {{ session.start_date }} to {{ session.end_date }} at {{ session.location }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>There are no available sessions at the moment.</p>
-  {% endif %}
+    <div class="dropdown mt-3">
+  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Dropdown button
+  </button>
+  <ul class="dropdown-menu">
+    {% for category in categories %}
+    <li><a class="dropdown-item" href="#">category</a></li>
+    {% endfor %}  
+  </ul>
+</div>
+    {% if sessions %}
+    <div class="row">
+        {% for session in sessions %}
+        <div class="col mb-3">
+            <div class="card h-100 shadow">
+                <div class="card-body mt-3">
+                    <h3 class="card-title">{{ session.name }}</h3>
+                    <small class="card-text">By: {{ session.tutor }}</small>
+                    <span class="badge badge-primary">{{ session.category }}</span>
+                    <p>{{ session.start_date }} to {{ session.end_date }}</p>
+                    <p>at {{ session.location }} </p>
+                    
+                    <a href="{% url 'recipe' session.id %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="mt-3">There are no available sessions at the moment.</p>
+    {% endif %}
+    <div class="position-absolute bottom-0 end-0 mx-3">
+        <a href="{% url 'session-create' %}" class="btn btn-primary mb-3 rounded-circle">
+            <i class="bi bi-plus"></i>
+        </a>
+    </div>
 {% endblock %}
+</div>
