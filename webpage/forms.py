@@ -1,4 +1,5 @@
 from django import forms
+from django_flatpickr.widgets import DatePickerInput, DateTimePickerInput
 from .models import Session
 
 class SessionForm(forms.ModelForm):
@@ -7,7 +8,7 @@ class SessionForm(forms.ModelForm):
         fields = ['category', 'session_date_time', 'start_date', 'end_date', 'location']
 
         widgets = {
-            'session_date_time': forms.DateInput(attrs={'type': 'date', 'class': 'flatpickr'}),
-            'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'flatpickr'}),
-            'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'flatpickr'}),
+            'session_date_time': DatePickerInput(attrs={'class': 'flatpickr'}),
+            'start_date': DateTimePickerInput(attrs={'class': 'flatpickr'}),
+            'end_date': DateTimePickerInput(attrs={'class': 'flatpickr'}),
         }

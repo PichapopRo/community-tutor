@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
 
@@ -23,7 +23,7 @@ class SessionCreateView(generic.CreateView):
 
     def form_valid(self, form):
         print("Form is valid!")
-        return super().form_valid(form)
+        return super().form_valid(form), redirect(reverse('session_list'))
 
     def form_invalid(self, form):
         print("Form is invalid!")

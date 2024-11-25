@@ -26,14 +26,14 @@ class UserInfo(models.Model):
 
 class Session(models.Model):
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
-    session_date_time = models.DateTimeField()
+    session_date_time = models.DateField()
     session_description = models.TextField(null=True, blank=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
     location = models.CharField(max_length=255)
 
     def can_apply(self):
-        return datetime.now() < self.session_date_time
+        return datetime.now().date() < self.session_date_time
 
     def __str__(self):
         return f"{self.category} - {self.start_date} to {self.end_date}"
