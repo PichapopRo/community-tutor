@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Available Sessions</h1>
+  <a href="{% url 'session-create' %}" class="btn btn-primary mb-3">Create New Session</a>
+
+  {% if sessions %}
+    <ul>
+      {% for session in sessions %}
+        <li>{{ session.category }}: {{ session.start_date }} to {{ session.end_date }} at {{ session.location }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no available sessions at the moment.</p>
+  {% endif %}
+{% endblock %}
