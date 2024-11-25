@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -29,6 +31,9 @@ class Session(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     location = models.CharField(max_length=255)
+
+    def can_apply(self):
+        return datetime.now() < self.session_date_time
 
     def __str__(self):
         return f"{self.category} - {self.start_date} to {self.end_date}"
