@@ -27,7 +27,7 @@
   {% if sessions %}
     <ul>
       {% for session in sessions %}
-        <li>{{ session.category }}: {{ session.description}} {{ session.start_date }} to {{ session.end_date }} at {{ session.location }}</li>
+        <li>{{ session.category }}: {{ session.start_date }} to {{ session.end_date }} at {{ session.location }}</li>
       {% endfor %}
     </ul>
   {% else %}
