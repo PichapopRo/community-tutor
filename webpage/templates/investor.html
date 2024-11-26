@@ -3,6 +3,41 @@
 <link rel="stylesheet" href="{% static 'styles/style.css' %}">
 <body>
 {% block content %}
-<h1>Investors Page!</h1>
+    <div class="container">
+    <h1 class="mx-auto mt-3">Investors Page!</h1>
+    <div class="row">
+        <div class="col-md-12 col-xl-3">
+            <div class="card mx-3 my-3">
+            <h5 class="card-title mx-3 my-3">Total User</h5>
+                <h3 class="card-label mx-3 ">Number</h3>
+            </div>
+        </div>
+        <div class="col-md-12 col-xl-3">
+        <div class="card mx-3 my-3">
+            <h5 class="card-title mx-3 my-3">Total Visitors</h5>
+                <h3 class="card-label mx-3 ">Number</h3>
+            </div>
+        </div>
+        <div class="col-md-12 col-xl-3">
+        <div class="card mx-3 my-3">
+            <h5 class="card-title mx-3 my-3">Total Tutors</h5>
+                <h3 class="card-label mx-3 ">Number</h3>
+            </div>
+        </div>
+        <div class="col-md-12 col-xl-3">
+        <div class="card mx-3 my-3">
+            <h5 class="card-title mx-3 my-3">Total Course</h5>
+                <h3 class="card-label mx-3 ">Number</h3>
+            </div>
+        </div>
+        <div class="col-md-12 col-xl-12">
+            <div class="card mx-3 my-3">
+            <h5 class="card-title mx-3 my-3">Correlation</h5>
+                <h3 class="card-label mx-3 ">Graph</h3>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
 </body>
 {% endblock %}

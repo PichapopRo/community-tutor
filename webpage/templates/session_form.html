@@ -2,21 +2,20 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
 </head>
-
-<body>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-</body>
-
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% extends "base.html" %}
-
 {% block content %}
+<body>
+<div class="container mx-3">
   <h1>Create New Session</h1>
+    <div class="row">
+    <div class="col-md-12">
   <form method="post" id="session-form">
     {% csrf_token %}
-
-    <div class="form-group mb-3">
-      <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+  <div class="col col-md-6">
+    <div class="mb-3">
+    <h5>{{ form.category.label }}</h5>
+      <label  for="{{ form.category.id_for_label }}"></label>
       {{ form.category }}
       {% if form.category.errors %}
         <div class="text-danger">
@@ -26,9 +25,10 @@
         </div>
       {% endif %}
     </div>
-    <div class="form-group mb-3">
-      <label for="{{ form.session_description.id_for_label }}">{{ form.session_description.label }}</label>
-      {{ form.session_description }}
+    <div class="mb-3">
+    <h5>{{ form.session_description.label }}</h5>
+    {{ form.session_description }}
+      <label class="text-area" for="{{ form.session_description.id_for_label }}"></label>
       {% if form.session_description.errors %}
         <div class="text-danger">
           {% for error in form.session_description.errors %}
@@ -37,8 +37,9 @@
         </div>
       {% endif %}
     </div>
-    <div class="form-group mb-3">
-      <label for="{{ form.start_date.id_for_label }}">{{ form.start_date.label }}</label>
+    <div class="mb-3">
+    <h5>{{ form.start_date.label }}</h5>
+      <label for="{{ form.start_date.id_for_label }}"></label>
       {{ form.start_date }}
       {% if form.start_date.errors %}
         <div class="text-danger">
@@ -48,9 +49,12 @@
         </div>
       {% endif %}
     </div>
+  </div>
 
-    <div class="form-group mb-3">
-      <label for="{{ form.end_date.id_for_label }}">{{ form.end_date.label }}</label>
+    <div class="col col-md-6">
+    <div class="mb-3">
+    <h5>{{ form.end_date.label }}</h5>
+      <label for="{{ form.end_date.id_for_label }}"></label>
       {{ form.end_date }}
       {% if form.end_date.errors %}
         <div class="text-danger">
@@ -60,9 +64,9 @@
         </div>
       {% endif %}
     </div>
-
-    <div class="form-group mb-3">
-      <label for="{{ form.location.id_for_label }}">{{ form.location.label }}</label>
+    <div class="mb-3">
+    <h5>{{ form.location.label }}</h5>
+      <label for="{{ form.location.id_for_label }}"></label>
       {{ form.location }}
       {% if form.location.errors %}
         <div class="text-danger">
@@ -72,8 +76,8 @@
         </div>
       {% endif %}
     </div>
-
-    <button type="submit" class="btn btn-success">Submit</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
   </form>
     <script>
     flatpickr("input[name='start_date']", {
@@ -89,3 +93,7 @@
     });
   </script>
 {% endblock %}
+</div>
+</div>
+</div>
+</body>

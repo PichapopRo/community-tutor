@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div class="container mt-3">
   <script>
     window.onload = (event) => {
       const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -12,8 +13,6 @@
   </script>
 
   <h1>Available Sessions</h1>
-  <a href="{% url 'session-create' %}" class="btn btn-primary mb-3">Create New Session</a>
-
   <form method="GET" action="{% url 'session-list' %}">
       <select name="filter_option" id='filter_option'>
           <option value="">All</option>
@@ -24,13 +23,31 @@
       <input type="submit" value="Filter">
   </form>
 
-  {% if sessions %}
-    <ul>
-      {% for session in sessions %}
-        <li>{{ session.category }}: {{ session.start_date }} to {{ session.end_date }} at {{ session.location }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>There are no available sessions at the moment.</p>
-  {% endif %}
+   {% if sessions %}
+    <div class="row">
+        {% for session in sessions %}
+        <div class="col mb-3">
+            <div class="card h-100 shadow">
+                <div class="card-body mt-3">
+                    <h3 class="card-title">{{ session.name }}</h3>
+                    <small class="card-text">By: {{ session.tutor }}</small>
+                    <span class="badge badge-primary">{{ session.category }}</span>
+                    <p>{{ session.start_date }} to {{ session.end_date }}</p>
+                    <p>at {{ session.location }} </p>
+                    
+                    <a href="{% url 'session-list' session.id %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="mt-3">There are no available sessions at the moment.</p>
+    {% endif %}
+<div class="position-absolute bottom-0 end-0 mx-3">
+        <a href="{% url 'session-create' %}" class="btn btn-primary mb-3 rounded-circle">
+            <i class="bi bi-plus"></i>
+        </a>
+    </div>
 {% endblock %}
+</div>

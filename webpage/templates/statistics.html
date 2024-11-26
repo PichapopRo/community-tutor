@@ -3,6 +3,16 @@
 <link rel="stylesheet" href="{% static 'styles/style.css' %}">
 <body>
 {% block content %}
-<h1>Statistics Page!</h1>
+    <div class="container mt-3 mx-3">
+        <h1 class="mx-auto">Statistics Page!</h1>
+        <div class="card my-3">
+            <h5 class="card-title mx-3 my-3">Popular Course</h5>
+                <h3 class="card-label mx-3 ">Number</h3>
+        </div>
+        <div class="card my-3">
+            <h5 class="card-title mx-3 my-3">Popular Tutor</h5>
+                <h3 class="card-label mx-3 ">Number</h3>
+        </div>
+    </div>
 </body>
 {% endblock %}
