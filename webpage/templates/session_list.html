@@ -1,19 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mx-3 my-3">
+    <div class="container mt-3">
+  <script>
+    window.onload = (event) => {
+      const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+      });
+      if (params.filter_option == null) return;
+      document.getElementById("opt" + params.filter_option).selected = true;
+    } ;
+  </script>
+
   <h1>Available Sessions</h1>
-    <div class="dropdown mt-3">
-  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Dropdown button
-  </button>
-  <ul class="dropdown-menu">
-    {% for category in categories %}
-    <li><a class="dropdown-item" href="#">category</a></li>
-    {% endfor %}  
-  </ul>
-</div>
-    {% if sessions %}
+  <form method="GET" action="{% url 'session-list' %}">
+      <select name="filter_option" id='filter_option'>
+          <option value="">All</option>
+          {% for category in categories %}
+              <option value="{{ category.category_id }}" id="opt{{ category.category_id }}">{{ category.category_name }}</option>
+          {% endfor %}
+      </select>
+      <input type="submit" value="Filter">
+  </form>
+
+   {% if sessions %}
     <div class="row">
         {% for session in sessions %}
         <div class="col mb-3">

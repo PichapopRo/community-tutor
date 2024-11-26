@@ -2,10 +2,13 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
+from typing import Any
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views import generic
 from webpage.forms import UserRegistrationForm, UserInfoForm, SessionForm
-from webpage.models import Session, Address
-
+from webpage.models import Session, Address, Category
+from webpage.forms import SessionForm
 
 def register(request):
     if request.method == 'POST':
@@ -75,8 +78,18 @@ class SessionView(generic.ListView):
     template_name = 'session_list.html'
 
     def get_queryset(self):
-        all_sessions = Session.objects.all()
+        options = self.request.GET.get("filter_option")
+        if options:
+            all_sessions = Session.objects.filter(category__category_id = options)
+        else:
+            all_sessions = Session.objects.all()
         return [session for session in all_sessions if session.can_apply()]
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        
+        return context
 
 
 class SessionCreateView(generic.CreateView):
