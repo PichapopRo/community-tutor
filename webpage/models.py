@@ -26,6 +26,8 @@ class UserInfo(models.Model):
 
 
 class Session(models.Model):
+    session_name = models.CharField(max_length=100, default="")
+    tutor_id = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     session_description = models.TextField(null=True, blank=True)
     start_date = models.DateTimeField()
@@ -63,27 +65,11 @@ class Transaction(models.Model):
 
 class Enroll(models.Model):
     enroll_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    student_id = models.ForeignKey(User, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('user_id', 'session')
+        unique_together = ('student_id', 'session')
 
     def __str__(self):
-        return f"Enrollment: {self.user_id} in {self.session}"
-
-
-class Tutor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    teaching_interests = models.ManyToManyField(Category)
-
-    def __str__(self):
-        return f"Tutor: {self.user.username}"
-
-
-class Learner(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    learning_interests = models.ManyToManyField(Category)
-
-    def __str__(self):
-        return f"Learner: {self.user.username}"
+        return f"Enrollment: {self.student_id} in {self.session}"

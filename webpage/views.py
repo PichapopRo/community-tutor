@@ -9,14 +9,18 @@ from django.views import generic
 from webpage.forms import UserRegistrationForm, UserInfoForm, SessionForm
 from webpage.models import Session, Address, Category
 from webpage.forms import SessionForm
+import logging
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+logger = logging.getLogger("Views.py")
 
 def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         user_info_form = UserInfoForm(request.POST)
-        print(user_form.is_valid())
-        print(user_info_form.is_valid())
-        print(user_info_form.cleaned_data['date_of_birth'])
+        logger.debug(user_form.is_valid())
+        logger.debug(user_info_form.is_valid())
+        logger.debug(user_info_form.cleaned_data['date_of_birth'])
         if user_form.is_valid():
             user = user_form.save(commit=True)
             user.set_password(user_form.cleaned_data['password'])
@@ -92,20 +96,24 @@ class SessionView(generic.ListView):
         return context
 
 
-class SessionCreateView(generic.CreateView):
+class SessionCreateView(LoginRequiredMixin, generic.CreateView):
     model = Session
     template_name = 'session_form.html'
     form_class = SessionForm
     success_url = '/'
 
     def form_valid(self, form):
-        print("Form is valid!")
+        # Set the user field to the currently logged-in user
+        form.instance.tutor_id = self.request.user
+        logger.debug("Form is valid!")
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("Form is invalid!")
-        print(form.errors)
+        logger.debug("Form is invalid!")
+        logger.debug(form.errors)
         return self.render_to_response(self.get_context_data(form=form))
+
+
 
 
 class SessionDetailView(generic.DetailView):
