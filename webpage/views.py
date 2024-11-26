@@ -13,7 +13,11 @@ class SessionView(generic.ListView):
     template_name = 'session_list.html'
 
     def get_queryset(self):
-        all_sessions = Session.objects.all()
+        options = self.request.GET.get("filter_option")
+        if options:
+            all_sessions = Session.objects.filter(category__category_id = options)
+        else:
+            all_sessions = Session.objects.all()
         return [session for session in all_sessions if session.can_apply()]
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
