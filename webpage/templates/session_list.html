@@ -16,7 +16,7 @@
 
   <form method="GET" action="{% url 'session-list' %}">
       <select name="filter_option" id='filter_option'>
-          <option value="">Select an option</option>
+          <option value="">All</option>
           {% for category in categories %}
               <option value="{{ category.category_id }}" id="opt{{ category.category_id }}">{{ category.category_name }}</option>
           {% endfor %}
