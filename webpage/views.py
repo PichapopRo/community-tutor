@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
 from webpage.forms import UserRegistrationForm, UserInfoForm, SessionForm
-from webpage.models import Session, Address, Category
+from webpage.models import *
 from webpage.forms import SessionForm
 
 def register(request):
@@ -117,9 +117,19 @@ class SessionDetailView(generic.DetailView):
         session_id = self.kwargs.get('pk')
         return get_object_or_404(Session, pk=session_id)
 
-
 def investor(request):
-    return render(request, 'investor.html')
+    user_count = UserInfo.objects.count()
+    enrollment_count = Enroll.objects.count()
+    tutor_count = Tutor.objects.count()
+    session_count = Session.objects.count()
+
+    context = {
+        'user_count': user_count,
+        'enrollment_count': enrollment_count,
+        'tutor_count': tutor_count,
+        'session_count': session_count,
+    }
+    return render(request, 'investor.html', context)
 
 
 def statistics(request):
