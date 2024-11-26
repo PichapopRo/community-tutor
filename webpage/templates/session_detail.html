@@ -4,7 +4,9 @@
   <h1>Session Details</h1>
   <div class="card">
     <div class="card-body">
-      <h2>{{ session.category }}</h2>
+      <h2>{{ session.session_name }}</h2>
+      <p><strong>Your tutor:</strong> {{ session.tutor_id.username }}</p>
+      <p><strong>Category:</strong> {{ session.category }}</p>
       <p><strong>Description:</strong> {{ session.session_description }}</p>
       <p><strong>Start Date:</strong> {{ session.start_date }}</p>
       <p><strong>End Date:</strong> {{ session.end_date }}</p>
