@@ -141,6 +141,7 @@ def join_session(request, pk):
         messages.warning(request, "You are already a participant in this session.")
     else:
         session.participants.add(request.user)
+
         messages.success(request, "You have successfully joined the session.")
     return redirect('session-detail', pk=pk)
 

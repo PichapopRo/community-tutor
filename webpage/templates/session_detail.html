@@ -6,11 +6,12 @@
     <div class="card-body">
       <h2>{{ session.session_name }}</h2>
       <p><strong>Your tutor:</strong> {{ session.tutor_id.username }}</p>
-      <p><strong>Category:</strong> {{ session.category }}</p>
+      <p><strong>Category:</strong> {{ session.category.name }}</p>
       <p><strong>Description:</strong> {{ session.session_description }}</p>
       <p><strong>Start Date:</strong> {{ session.start_date }}</p>
       <p><strong>End Date:</strong> {{ session.end_date }}</p>
       <p><strong>Location:</strong> {{ session.location }}</p>
+      <p><strong>Fee:</strong> {{ session.fee }}</p>
       <p><strong>Participants:</strong> {{ session.participants.count }} / {{ session.maximum_participant }}</p>
     </div>
   </div>
@@ -24,20 +25,22 @@
     {% endfor %}
   </ul>
 
-{% if request.user in session.participants.all %}
-    <form method="post" action="{% url 'leave-session' session.pk %}">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-warning">Leave Session</button>
-    </form>
-  {% elif not session.is_full %}
-    <form method="post" action="{% url 'join-session' session.pk %}">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-primary">Join Session</button>
-    </form>
-  {% elif not user.is_authenticated %}
-    <h5>Login to join session</h5>
-  {% else %}
-    <p>The session is full.</p>
+  {% if request.user != session.tutor_id %}
+    {% if not request.user.is_authenticated %}
+      <h5>Login to join any sessions</h5>
+    {% elif request.user in session.participants.all %}
+      <form method="post" action="{% url 'leave-session' session.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-warning">Leave Session</button>
+      </form>
+    {% elif not session.is_full %}
+      <form method="post" action="{% url 'join-session' session.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Join Session</button>
+      </form>
+    {% else %}
+      <p>The session is full.</p>
+    {% endif %}
   {% endif %}
 
   <a href="{% url 'session-list' %}" class="btn btn-primary mt-3">Back to Sessions</a>

@@ -1,7 +1,7 @@
 from datetime import datetime
-
 from django.db import models
 from django.contrib.auth.models import User
+
 
 class Address(models.Model):
     address_id = models.AutoField(primary_key=True)
@@ -35,6 +35,7 @@ class Session(models.Model):
     location = models.CharField(max_length=255)
     maximum_participant = models.IntegerField(default=1, null=False)
     participants = models.ManyToManyField(User, related_name='joined_sessions', blank=True)
+    fee = models.IntegerField(default=0, null=False)
 
     def can_apply(self):
         return datetime.now().date() < self.start_date.date()
@@ -61,8 +62,7 @@ class Transaction(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_transactions')
     date = models.DateField()
     time = models.TimeField()
-    duration = models.DurationField()
-    fee = models.DecimalField(max_digits=10, decimal_places=2)
+    fee = models.IntegerField(default=0, null=False)
 
     def __str__(self):
         return f"Transaction {self.transaction_id} - {self.learner} and {self.tutor}"
