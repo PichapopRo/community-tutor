@@ -102,7 +102,6 @@ class SessionCreateView(LoginRequiredMixin, generic.CreateView):
     success_url = '/'
 
     def form_valid(self, form):
-        # Set the user field to the currently logged-in user
         form.instance.tutor_id = self.request.user
         logger.debug("Form is valid!")
         return super().form_valid(form)
