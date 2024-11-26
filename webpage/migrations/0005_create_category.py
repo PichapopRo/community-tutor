@@ -5,15 +5,13 @@ from django.db import migrations
 
 def create_default_categories(apps, schema_editor):
     Category = apps.get_model('webpage', 'Category')
-    categories = [
-        "Yoga",
-        "House work",
-        "Gardening",
-        "Cooking",
-        "Languages",
-    ]
-    for category_name in categories:
-        Category.objects.get_or_create(category_name=category_name)
+    Category.objects.bulk_create([
+        Category(category_name="Yoga"),
+        Category(category_name="House work"),
+        Category(category_name="Gardening"),
+        Category(category_name="Cooking"),
+        Category(category_name="Languages"),
+    ])
 
 
 class Migration(migrations.Migration):
