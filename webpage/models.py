@@ -33,9 +33,14 @@ class Session(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     location = models.CharField(max_length=255)
+    maximum_participant = models.IntegerField(default=1, null=False)
+    participants = models.ManyToManyField(User, related_name='joined_sessions', blank=True)
 
     def can_apply(self):
         return datetime.now().date() < self.start_date.date()
+
+    def is_full(self):
+        return self.participants.count() >= self.maximum_participant
 
     def __str__(self):
         return f"{self.category} - {self.start_date} to {self.end_date}"

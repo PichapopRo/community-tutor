@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from typing import Any
@@ -20,8 +21,7 @@ def register(request):
         user_info_form = UserInfoForm(request.POST)
         logger.debug(user_form.is_valid())
         logger.debug(user_info_form.is_valid())
-        logger.debug(user_info_form.cleaned_data['date_of_birth'])
-        if user_form.is_valid():
+        if user_form.is_valid() and user_info_form.is_valid():
             user = user_form.save(commit=True)
             user.set_password(user_form.cleaned_data['password'])
             user.save()
@@ -40,14 +40,13 @@ def register(request):
             user_info.save()
             login(request, user)
             return redirect('session-list')
-        else:
-            user_form = UserRegistrationForm()
-            user_info_form = UserInfoForm()
-
-        return render(request, 'registration/register.html', {
-            'user_form': user_form,
-            'user_info_form': user_info_form,
-        })
+    else:
+        user_form = UserRegistrationForm()
+        user_info_form = UserInfoForm()
+    return render(request, 'registration/register.html', {
+        'user_form': user_form,
+        'user_info_form': user_info_form,
+    })
 
 
 def login_view(request):
@@ -103,7 +102,6 @@ class SessionCreateView(LoginRequiredMixin, generic.CreateView):
     success_url = '/'
 
     def form_valid(self, form):
-        # Set the user field to the currently logged-in user
         form.instance.tutor_id = self.request.user
         logger.debug("Form is valid!")
         return super().form_valid(form)
@@ -112,8 +110,6 @@ class SessionCreateView(LoginRequiredMixin, generic.CreateView):
         logger.debug("Form is invalid!")
         logger.debug(form.errors)
         return self.render_to_response(self.get_context_data(form=form))
-
-
 
 
 class SessionDetailView(generic.DetailView):
@@ -132,3 +128,26 @@ def investor(request):
 
 def statistics(request):
     return render(request, 'statistics.html')
+
+
+def join_session(request, pk):
+    session = get_object_or_404(Session, pk=pk)
+
+    if session.is_full():
+        messages.error(request, "This session is already full.")
+        return redirect('session-detail', pk=pk)
+
+    if request.user in session.participants.all():
+        messages.warning(request, "You are already a participant in this session.")
+    else:
+        session.participants.add(request.user)
+        messages.success(request, "You have successfully joined the session.")
+    return redirect('session-detail', pk=pk)
+
+
+@login_required
+def leave_session(request, pk):
+    session = get_object_or_404(Session, pk=pk)
+    if request.user in session.participants.all():
+        session.participants.remove(request.user)
+    return redirect('session-detail', pk=pk)

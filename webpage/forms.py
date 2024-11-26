@@ -7,7 +7,8 @@ from .models import Session, UserInfo
 class SessionForm(forms.ModelForm):
     class Meta:
         model = Session
-        fields = ['category', 'session_name', 'start_date', 'end_date', 'location', 'session_description']
+        fields = ['category', 'session_name', 'start_date', 'end_date', 'location',
+                  'session_description', 'maximum_participant']
 
         widgets = {
             'start_date': DateTimePickerInput(attrs={'class': 'flatpickr'}),

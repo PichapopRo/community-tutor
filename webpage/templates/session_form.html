@@ -88,8 +88,18 @@
         </div>
       {% endif %}
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <h5>{{ form.maximum_participant.label }}</h5>
+      <label for="{{ form.maximum_participant.id_for_label }}"></label>
+      {{ form.maximum_participant }}
+      {% if form.maximum_participant.errors %}
+        <div class="text-danger">
+          {% for error in form.maximum_participant.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+  {% endif %}
     </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
   </form>
     <script>
     flatpickr("input[name='start_date']", {
