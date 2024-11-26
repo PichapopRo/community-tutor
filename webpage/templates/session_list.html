@@ -25,7 +25,7 @@
                     <p>{{ session.start_date }} to {{ session.end_date }}</p>
                     <p>at {{ session.location }} </p>
                     
-                    <a href="{% url 'recipe' session.id %}" class="stretched-link"></a>
+                    <a href="{% url 'session-detail' session.id %}" class="stretched-link"></a>
                 </div>
             </div>
         </div>

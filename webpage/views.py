@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views import generic
 
@@ -30,6 +30,17 @@ class SessionCreateView(generic.CreateView):
         print("Form is invalid!")
         print(form.errors)
         return self.render_to_response(self.get_context_data(form=form))
+
+
+class SessionDetailView(generic.DetailView):
+    model = Session
+    template_name = 'session_detail.html'
+    context_object_name = 'session'
+
+    def get_object(self, queryset=None):
+        session_id = self.kwargs.get('pk')
+        return get_object_or_404(Session, pk=session_id)
+
 
 def investor(request):
     return render(request, 'investor.html')

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Session Details</h1>
+  <div class="card">
+    <div class="card-body">
+      <h2>{{ session.category }}</h2>
+      <p><strong>Description:</strong> {{ session.session_description }}</p>
+      <p><strong>Start Date:</strong> {{ session.start_date }}</p>
+      <p><strong>End Date:</strong> {{ session.end_date }}</p>
+      <p><strong>Location:</strong> {{ session.location }}</p>
+    </div>
+  </div>
+  <a href="{% url 'session-list' %}" class="btn btn-primary mt-3">Back to Sessions</a>
+{% endblock %}
