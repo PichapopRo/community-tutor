@@ -4,10 +4,20 @@
   <h1>Available Sessions</h1>
   <a href="{% url 'session-create' %}" class="btn btn-primary mb-3">Create New Session</a>
 
+  <form method="GET" action="{% url 'session-list' %}">
+      <select name="filter_option">
+          <option value="">Select an option</option>
+          {% for category in categories %}
+              <option value="{{ category.category_id }}">{{ category.category_name }}</option>
+          {% endfor %}
+      </select>
+      <input type="submit" value="Filter">
+  </form>
+
   {% if sessions %}
     <ul>
       {% for session in sessions %}
-        <li>{{ session.category }}: {{ session.start_date }} to {{ session.end_date }} at {{ session.location }}</li>
+        <li>{{ session.category }}: {{ session.description}} {{ session.start_date }} to {{ session.end_date }} at {{ session.location }}</li>
       {% endfor %}
     </ul>
   {% else %}

@@ -1,9 +1,10 @@
+from typing import Any
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
 
 from webpage.forms import SessionForm
-from webpage.models import Session
+from webpage.models import Session, Category
 
 
 class SessionView(generic.ListView):
@@ -14,6 +15,12 @@ class SessionView(generic.ListView):
     def get_queryset(self):
         all_sessions = Session.objects.all()
         return [session for session in all_sessions if session.can_apply()]
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        
+        return context
 
 
 class SessionCreateView(generic.CreateView):
