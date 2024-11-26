@@ -1,8 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
+  <script>
+    window.onload = (event) => {
+      const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+      });
+      if (params.filter_option == null) return;
+      document.getElementById("opt" + params.filter_option).selected = true;
+    } ;
+  </script>
+
   <h1>Available Sessions</h1>
   <a href="{% url 'session-create' %}" class="btn btn-primary mb-3">Create New Session</a>
+
+  <form method="GET" action="{% url 'session-list' %}">
+      <select name="filter_option" id='filter_option'>
+          <option value="">All</option>
+          {% for category in categories %}
+              <option value="{{ category.category_id }}" id="opt{{ category.category_id }}">{{ category.category_name }}</option>
+          {% endfor %}
+      </select>
+      <input type="submit" value="Filter">
+  </form>
 
   {% if sessions %}
     <ul>
