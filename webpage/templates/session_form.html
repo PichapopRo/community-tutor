@@ -38,6 +38,18 @@
       {% endif %}
     </div>
     <div class="mb-3">
+    <h5>{{ form.session_name.label }}</h5>
+    {{ form.session_name }}
+      <label class="text-area" for="{{ form.session_name.id_for_label }}"></label>
+      {% if form.session_name.errors %}
+        <div class="text-danger">
+          {% for error in form.session_name.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    <div class="mb-3">
     <h5>{{ form.start_date.label }}</h5>
       <label for="{{ form.start_date.id_for_label }}"></label>
       {{ form.start_date }}
@@ -76,8 +88,18 @@
         </div>
       {% endif %}
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <h5>{{ form.maximum_participant.label }}</h5>
+      <label for="{{ form.maximum_participant.id_for_label }}"></label>
+      {{ form.maximum_participant }}
+      {% if form.maximum_participant.errors %}
+        <div class="text-danger">
+          {% for error in form.maximum_participant.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+  {% endif %}
     </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
   </form>
     <script>
     flatpickr("input[name='start_date']", {

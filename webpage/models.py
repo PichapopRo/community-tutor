@@ -26,14 +26,21 @@ class UserInfo(models.Model):
 
 
 class Session(models.Model):
+    session_name = models.CharField(max_length=100, default="")
+    tutor_id = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     session_description = models.TextField(null=True, blank=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     location = models.CharField(max_length=255)
+    maximum_participant = models.IntegerField(default=1, null=False)
+    participants = models.ManyToManyField(User, related_name='joined_sessions', blank=True)
 
     def can_apply(self):
         return datetime.now().date() < self.start_date.date()
+
+    def is_full(self):
+        return self.participants.count() >= self.maximum_participant
 
     def __str__(self):
         return f"{self.category} - {self.start_date} to {self.end_date}"
@@ -63,27 +70,11 @@ class Transaction(models.Model):
 
 class Enroll(models.Model):
     enroll_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    student_id = models.ForeignKey(User, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('user_id', 'session')
+        unique_together = ('student_id', 'session')
 
     def __str__(self):
-        return f"Enrollment: {self.user_id} in {self.session}"
-
-
-class Tutor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    teaching_interests = models.ManyToManyField(Category)
-
-    def __str__(self):
-        return f"Tutor: {self.user.username}"
-
-
-class Learner(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    learning_interests = models.ManyToManyField(Category)
-
-    def __str__(self):
-        return f"Learner: {self.user.username}"
+        return f"Enrollment: {self.student_id} in {self.session}"
