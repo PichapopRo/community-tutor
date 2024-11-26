@@ -2,11 +2,11 @@
 
 {% block content %}
   <script>
-    console.log("hello world")
     window.onload = (event) => {
       const params = new Proxy(new URLSearchParams(window.location.search), {
         get: (searchParams, prop) => searchParams.get(prop),
       });
+      if (params.filter_option == null) return;
       document.getElementById("opt" + params.filter_option).selected = true;
     } ;
   </script>
