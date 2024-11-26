@@ -26,7 +26,7 @@ class UserInfo(models.Model):
 
 
 class Session(models.Model):
-    session_name = models.CharField(max_length=100, default="Name")
+    session_name = models.CharField(max_length=100, default="")
     tutor_id = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     session_description = models.TextField(null=True, blank=True)

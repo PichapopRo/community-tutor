@@ -9,6 +9,10 @@ from django.views import generic
 from webpage.forms import UserRegistrationForm, UserInfoForm, SessionForm
 from webpage.models import Session, Address, Category
 from webpage.forms import SessionForm
+import logging
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+logger = logging.getLogger("Views.py")
 
 def register(request):
     if request.method == 'POST':
@@ -92,13 +96,15 @@ class SessionView(generic.ListView):
         return context
 
 
-class SessionCreateView(generic.CreateView):
+class SessionCreateView(LoginRequiredMixin, generic.CreateView):
     model = Session
     template_name = 'session_form.html'
     form_class = SessionForm
     success_url = '/'
 
     def form_valid(self, form):
+        # Set the user field to the currently logged-in user
+        form.instance.tutor_id = self.request.user
         print("Form is valid!")
         return super().form_valid(form)
 
@@ -106,6 +112,8 @@ class SessionCreateView(generic.CreateView):
         print("Form is invalid!")
         print(form.errors)
         return self.render_to_response(self.get_context_data(form=form))
+
+
 
 
 class SessionDetailView(generic.DetailView):
