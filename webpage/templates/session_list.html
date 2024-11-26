@@ -35,7 +35,7 @@
                     <p>{{ session.start_date }} to {{ session.end_date }}</p>
                     <p>at {{ session.location }} </p>
                     
-                    <a href="{% url 'session-list' session.id %}" class="stretched-link"></a>
+                    <a href="{% url 'session-detail' session.id %}" class="stretched-link"></a>
                 </div>
             </div>
         </div>
@@ -44,10 +44,12 @@
     {% else %}
         <p class="mt-3">There are no available sessions at the moment.</p>
     {% endif %}
-<div class="position-absolute bottom-0 end-0 mx-3">
+    {% if user.is_authenticated %}
+    <div class="position-absolute bottom-0 end-0 mx-3">
         <a href="{% url 'session-create' %}" class="btn btn-primary mb-3 rounded-circle">
             <i class="bi bi-plus"></i>
         </a>
     </div>
+    {% endif %}
 {% endblock %}
 </div>

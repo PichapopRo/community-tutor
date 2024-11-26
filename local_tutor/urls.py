@@ -18,8 +18,13 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
 
+from webpage import views
+
 urlpatterns = [
     path('', RedirectView.as_view(url='/local-tutor/', permanent=False)),
     path("local-tutor/", include("webpage.urls")),
     path("admin/", admin.site.urls),
+    path('register/', views.register, name='register'),
+    path('accounts/login/', views.login_view, name='login'),
+    path('logout/', views.signout_view, name='logout'),
 ]

@@ -1,11 +1,76 @@
+from django.contrib import messages
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render, redirect, get_object_or_404
 from typing import Any
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
-
+from webpage.forms import UserRegistrationForm, UserInfoForm, SessionForm
+from webpage.models import Session, Address, Category
 from webpage.forms import SessionForm
-from webpage.models import Session, Category
 
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        user_info_form = UserInfoForm(request.POST)
+        print(user_form.is_valid())
+        print(user_info_form.is_valid())
+        print(user_info_form.cleaned_data['date_of_birth'])
+        if user_form.is_valid():
+            user = user_form.save(commit=True)
+            user.set_password(user_form.cleaned_data['password'])
+            user.save()
+            address = Address(
+                street_address=user_info_form.cleaned_data['street_address'],
+                sub_district=user_info_form.cleaned_data['sub_district'],
+                district=user_info_form.cleaned_data['district'],
+                province=user_info_form.cleaned_data['province'],
+                zip_code=user_info_form.cleaned_data['zip_code']
+            )
+            address.save()
+            user_info = user_info_form.save(commit=False)
+            user_info.user = user
+            user_info.address = address
+            user_info.date_of_birth = user_info_form.cleaned_data['date_of_birth']
+            user_info.save()
+            login(request, user)
+            return redirect('session-list')
+        else:
+            user_form = UserRegistrationForm()
+            user_info_form = UserInfoForm()
+
+        return render(request, 'registration/register.html', {
+            'user_form': user_form,
+            'user_info_form': user_info_form,
+        })
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                return redirect('session-list')
+            else:
+                messages.error(request, 'Invalid username or password')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'registration/login.html', {'form': form})
+
+
+def signout_view(request):
+    logout(request)
+    return redirect("session-list")
 
 class SessionView(generic.ListView):
     model = Session
@@ -41,6 +106,17 @@ class SessionCreateView(generic.CreateView):
         print("Form is invalid!")
         print(form.errors)
         return self.render_to_response(self.get_context_data(form=form))
+
+
+class SessionDetailView(generic.DetailView):
+    model = Session
+    template_name = 'session_detail.html'
+    context_object_name = 'session'
+
+    def get_object(self, queryset=None):
+        session_id = self.kwargs.get('pk')
+        return get_object_or_404(Session, pk=session_id)
+
 
 def investor(request):
     return render(request, 'investor.html')
