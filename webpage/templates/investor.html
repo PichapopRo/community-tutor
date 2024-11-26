@@ -6,25 +6,19 @@
     <div class="container">
     <h1 class="mx-auto mt-3">Investors Page!</h1>
     <div class="row">
-        <div class="col-md-12 col-xl-3">
+        <div class="col-md-12 col-xl-4">
             <div class="card mx-3 my-3">
             <h5 class="card-title mx-3 my-3">Total Users</h5>
                 <h3 class="card-label mx-3 ">{{ user_count }} Users</h3>
             </div>
         </div>
-        <div class="col-md-12 col-xl-3">
+        <div class="col-md-12 col-xl-4">
         <div class="card mx-3 my-3">
             <h5 class="card-title mx-3 my-3">Total Enrollments</h5>
                 <h3 class="card-label mx-3 ">{{ enrollment_count }} Enrollments</h3>
             </div>
         </div>
-        <div class="col-md-12 col-xl-3">
-        <div class="card mx-3 my-3">
-            <h5 class="card-title mx-3 my-3">Total Tutors</h5>
-                <h3 class="card-label mx-3 ">{{ tutor_count }} Tutors</h3>
-            </div>
-        </div>
-        <div class="col-md-12 col-xl-3">
+        <div class="col-md-12 col-xl-4">
         <div class="card mx-3 my-3">
             <h5 class="card-title mx-3 my-3">Total Sessions</h5>
                 <h3 class="card-label mx-3 ">{{ session_count }} Sessions</h3>
@@ -33,7 +27,34 @@
         <div class="col-md-12 col-xl-12">
             <div class="card mx-3 my-3">
             <h5 class="card-title mx-3 my-3">Correlation</h5>
-                <h3 class="card-label mx-3 ">Graph</h3>
+                <h3 class="card-label mx-3 ">
+                    <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+                    <script>
+                    const xValues = [50,60,70,80,90,100,110,120,130,140,150];
+                    const yValues = [7,8,8,9,9,9,10,11,14,14,15];
+                    
+                    new Chart("myChart", {
+                      type: "line",
+                      data: {
+                        labels: xValues,
+                        datasets: [{
+                          fill: false,
+                          lineTension: 0,
+                          backgroundColor: "rgba(0,0,255,1.0)",
+                          borderColor: "rgba(0,0,255,0.1)",
+                          data: yValues
+                        }]
+                      },
+                      options: {
+                        legend: {display: false},
+                        scales: {
+                          yAxes: [{ticks: {min: 6, max:16}}],
+                        }
+                      }
+                    });
+                    </script>
+                </h3>
+                
             </div>
         </div>
         </div>

@@ -124,13 +124,11 @@ class SessionDetailView(generic.DetailView):
 def investor(request):
     user_count = UserInfo.objects.count()
     enrollment_count = Enroll.objects.count()
-    tutor_count = Tutor.objects.count()
     session_count = Session.objects.count()
 
     context = {
         'user_count': user_count,
         'enrollment_count': enrollment_count,
-        'tutor_count': tutor_count,
         'session_count': session_count,
     }
     return render(request, 'investor.html', context)
