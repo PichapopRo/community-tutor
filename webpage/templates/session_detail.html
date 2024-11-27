@@ -28,7 +28,7 @@
     {% if request.user == session.tutor_id %}
         <h3>Applicants</h3>
           <ul>
-    {% for applicant in session.pending_learners %}
+    {% for applicant in session.applicants %}
       <li>{{ applicant.username }}</li>
     {% empty %}
       <p>No applicants yet.</p>

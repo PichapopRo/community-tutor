@@ -148,7 +148,7 @@ def join_session(request, pk):
     else:
         current_datetime = timezone.now()
         transaction = Transaction(
-            session_id=session.id,
+            session_id=session,
             learner=request.user,
             tutor=session.tutor_id,
             date=current_datetime.date(),
@@ -157,8 +157,7 @@ def join_session(request, pk):
             status='pending'
         )
         transaction.save()
-
-        messages.success(request, "You have successfully joined the session.")
+        messages.success(request, "You have successfully applied the session.")
     return redirect('session-detail', pk=pk)
 
 
