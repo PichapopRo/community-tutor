@@ -1,69 +1,76 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Session Details</h1>
-
-  <div class="card">
-    <div class="card-body">
-      <h2>{{ session.session_name }}</h2>
-      <p><strong>Your tutor:</strong> {{ session.tutor_id.username }}</p>
-      <p><strong>PromptPay ID:</strong>
-        <span class="text-danger">{{ session.get_tutor_info.phone_number }}</span>
-      </p>
-      <p><strong>Category:</strong> {{ session.category }}</p>
-      <p><strong>Description:</strong> {{ session.session_description }}</p>
-      <p><strong>Start Date:</strong> {{ session.start_date }}</p>
-      <p><strong>End Date:</strong> {{ session.end_date }}</p>
-      <p><strong>Location:</strong> {{ session.location }}</p>
-      <p><strong>Fee:</strong> {{ session.fee }} Baht</p>
-      <p><strong>Participants:</strong> {{ session.participants.count }} / {{ session.maximum_participant }}</p>
+  <a href="{% url 'session-list' %}" class="btn btn-primary mt-3">Back to Sessions</a>
+    <div class="container mx-3">
+    <div class="row">
+    <div class="col-md-12 col-xl-6">
+      <h1 class="mt-3">Session Details</h1>
+      <div class="card mt-3">
+        <div class="card-body">
+          <h2>{{ session.session_name }}</h2>
+          <p><strong>Your tutor:</strong> {{ session.tutor_id.username }}</p>
+          <p><strong>PromptPay ID:</strong>
+            <span class="text-danger">{{ session.get_tutor_info.phone_number }}</span>
+          </p>
+          <p><strong>Category:</strong> {{ session.category }}</p>
+          <p><strong>Description:</strong> {{ session.session_description }}</p>
+          <p><strong>Start Date:</strong> {{ session.start_date }}</p>
+          <p><strong>End Date:</strong> {{ session.end_date }}</p>
+          <p><strong>Location:</strong> {{ session.location }}</p>
+          <p><strong>Fee:</strong> {{ session.fee }} Baht</p>
+          <p><strong>Participants:</strong> {{ session.participants.count }} / {{ session.maximum_participant }}</p>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <h3>Participants</h3>
-  <ul>
-    {% for participant in session.participants.all %}
-      <li>{{ participant.username }}</li>
-    {% empty %}
-      <p>No participants yet.</p>
-    {% endfor %}
-  </ul>
-
-  {% if request.user == session.tutor_id %}
-    {% if not session.is_full %}
-      <h3>Applicants</h3>
+    <div class="col-md-12 col-xl-6">
+      <h1 class="mt-3">Participants</h1>
+            <div class="card mt-3">
+        <div class="card-body">
       <ul>
-        {% for transaction in session.get_pending_transactions %}
-          <div class="d-flex justify-content-start align-items-center mb-2">
-            <p class="mb-0 mr-2">{{ transaction.learner.username }}: {{ transaction.payment_id }}</p>
-            <form method="post" action="{% url 'accept-session' session.pk transaction.learner.pk %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-success mr-2">Accept</button>
-            </form>
-            <form method="post" action="{% url 'cancel-session' session.pk transaction.pk %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Cancel</button>
-            </form>
-          </div>
+        {% for participant in session.participants.all %}
+          <li>{{ participant.username }}</li>
         {% empty %}
-          <p>No applicants yet.</p>
+          <p>No participants yet.</p>
         {% endfor %}
       </ul>
-    {% else %}
-      <p>The session is full.</p>
-    {% endif %}
-  {% else %}
-    {% if not request.user.is_authenticated %}
-      <h5>Login to join any sessions</h5>
-    {% elif request.user in session.participants.all %}
-      <form method="post" action="{% url 'leave-session' session.pk %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-warning">Leave Session</button>
-      </form>
-    {% elif request.user in session.get_applicants %}
-      <p>You have applied for this session and are pending approval.</p>
-    {% elif not session.is_full %}
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">Apply Session</button>
+        </div>
+            </div>
+      {% if request.user == session.tutor_id %}
+        {% if not session.is_full %}
+          <h3 class="mt-3">Applicants</h3>
+          <ul>
+            {% for transaction in session.get_pending_transactions %}
+              <div class="d-flex justify-content-start align-items-center mb-2">
+                <p class="mb-0 mr-2">{{ transaction.learner.username }}: {{ transaction.payment_id }}</p>
+                <form method="post" action="{% url 'accept-session' session.pk transaction.learner.pk %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-success mx-3"><i class="bi bi-check"></i></button>
+                </form>
+                <form method="post" action="{% url 'cancel-session' session.pk transaction.pk %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-danger mx-2"><i class="bi bi-x"></i></button>
+                </form>
+              </div>
+            {% empty %}
+              <p>No applicants yet.</p>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>The session is full.</p>
+        {% endif %}
+      {% else %}
+        {% if not request.user.is_authenticated %}
+          <h5>Login to join any sessions</h5>
+        {% elif request.user in session.participants.all %}
+          <form method="post" action="{% url 'leave-session' session.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning">Leave Session</button>
+          </form>
+        {% elif request.user in session.get_applicants %}
+          <p>You have applied for this session and are pending approval.</p>
+        {% elif not session.is_full %}
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">Apply Session</button>
 
       <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -95,9 +102,10 @@
         </div>
       </div>
     {% else %}
-      <p>The session is full.</p>
+      <p class="mt-3">The session is full.</p>
     {% endif %}
   {% endif %}
-
-  <a href="{% url 'session-list' %}" class="btn btn-primary mt-3">Back to Sessions</a>
+    </div>
+    </div>
 {% endblock %}
+</div>

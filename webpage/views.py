@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
 from webpage.forms import UserRegistrationForm, UserInfoForm, SessionForm
-from webpage.models import Session, Address, Category, Transaction
+from webpage.models import *
 from webpage.forms import SessionForm
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -131,7 +131,15 @@ class SessionDetailView(generic.DetailView):
 
 
 def investor(request):
-    return render(request, 'investor.html')
+    user_count = UserInfo.objects.count()
+    enrollment_count = Enroll.objects.count()
+    session_count = Session.objects.count()
+    context = {
+        'user_count': user_count,
+        'enrollment_count': enrollment_count,
+        'session_count': session_count,
+    }
+    return render(request, 'investor.html', context)
 
 
 class StatisticView(generic.TemplateView):
