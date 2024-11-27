@@ -70,7 +70,7 @@
         {% elif request.user in session.get_applicants %}
           <p>You have applied for this session and are pending approval.</p>
         {% elif not session.is_full %}
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">Apply Session</button>
+          <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#paymentModal">Apply Session</button>
 
       <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
         <div class="modal-dialog">

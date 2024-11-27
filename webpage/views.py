@@ -132,7 +132,7 @@ class SessionDetailView(generic.DetailView):
 
 def investor(request):
     user_count = UserInfo.objects.count()
-    enrollment_count = Enroll.objects.count()
+    enrollment_count = Transaction.objects.filter(status='enrolled').count()
     session_count = Session.objects.count()
     context = {
         'user_count': user_count,

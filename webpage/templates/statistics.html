@@ -4,76 +4,100 @@
 <body>
 {% block content %}
     <div class="container mt-3 mx-3">
-        <h1 class="mx-auto">Statistics Page!</h1>
-        <div class="card my-3">
-            <h5 class="card-title mx-3 my-3">Top 5 Most Popular Sessions</h5>
+    <h1 class="mx-auto">Statistics Page!</h1>
+    <div class="row">
+        <div class="col-md-12 col-xl-4">
+        <div class="card shadow h-100 my-3">
+            <h5 class="card-title mx-3 mt-3">Top 5 Most Popular Sessions</h5>
+                <ol>
                 {% if not popular_sessions %}
                     <h3 class="card-label mx-3 ">Not Available</h3>
                 {% else %}
                     {% for session in popular_sessions %}
-                        <h3 class="card-label mx-3 ">{{ session.session_name }} by: {{ session.tutor_id.username}} </h3>
+                        <li class="mx-3">
+                        <h6 class="card-label">{{ session.session_name }}  by: {{ session.tutor_id.username}}</h6>
+                        </li>
                     {% endfor %}
-
+                </ol>
                 {% endif %}
         </div>
-
-        <div class="card my-3">
+        </div>
+    <div class="col-md-12 col-xl-4">
+        <div class="card shadow h-100 my-3">
             <h5 class="card-title mx-3 my-3">Top 5 Most Popular Tutor</h5>
+                <ol>
                 {% if not popular_tutors %}
                     <h3 class="card-label mx-3 ">Not Available</h3>
                 {% else %}
                     {% for tutor_name in popular_tutors %}
-                        <h3 class="card-label mx-3 ">{{ tutor_name }}</h3>
+                        <li class="mx-3">
+                        <h6 class="card-label">{{ tutor_name }}</h6>
+                        </li>
                     {% endfor %}
-
+                    </ol>
                 {% endif %}
         </div>
-
-        <div class="card my-3">
+    </div>
+<div class="col-md-12 col-xl-4">
+        <div class="card shadow h-100 my-3">
             <h5 class="card-title mx-3 my-3">Top 5 Most Popular Categories</h5>
+                <ol>
                 {% if not popular_categories %}
                     <h3 class="card-label mx-3 ">Not Available</h3>
                 {% else %}
                     {% for category_name in popular_categories %}
-                        <h3 class="card-label mx-3 ">{{ category_name }}</h3>
+                        <li>
+                        <h6 class="card-label mx-3 ">{{ category_name }}</h6>
+                        </li>
                     {% endfor %}
-
+                </ol>
                 {% endif %}
         </div>
-
-        <div class="card my-3">
-            <h5 class="card-title mx-3 my-3">Top 5 Most Popular People Per Category</h5>
+</div>
+    </div>
+    <div class="row d-flex">
+        <div class="col-lg-6 mt-3">
+            <div class="card shadow my-3">
+                <h5 class="card-title mx-3 my-3">Top 5 Most Popular People Per Category</h5>
                 {% for category_name, tutors in popular_per_category.items %}
-                    <h3 class="card-label mx-3 "><b>{{ category_name }}</b></h3>
+                    <h6 class="card-label mx-3 "><b>{{ category_name }}</b></h6>
                     {% if tutors %}
                         {% for tutor in tutors %}
-                            <h3 class="card-label mx-3 ">{{ tutor.username }} with {{ tutor.total_participants }} participants.</h3>
+                            <h6 class="card-label mx-3 ">{{ tutor.username }} with {{ tutor.total_participants }} participants.</h6>
                         {% endfor %}
                     {% else %}
-                        <h3 class="card-label mx-3 ">None.</h3>
+                        <h6 class="card-label mx-3 ">None.</h6>
                     {% endif %}
                 {% endfor %}
+            </div>
         </div>
-
-        <div class="card my-3">
-            <h5 class="card-title mx-3 my-3">Average enrollment per user</h5>
-            <h3 class="card-label mx-3 ">{{ avg_num_enroll }} course per person</h3>
-        </div> 
-        
-        <div class="card my-3">
-            <h5 class="card-title mx-3 my-3">Average course per tutor</h5>
-            <h3 class="card-label mx-3 ">{{ avg_course_per_tutor }} course per tutor</h3>
-        </div> 
-
-        <div class="card my-3">
-            <h5 class="card-title mx-3 my-3">Category that makes the most money</h5>
-            {% if ctg_with_most_rev.total_money %}
-                <h3 class="card-label mx-3 ">{{ ctg_with_most_rev.category_name }} : {{ ctg_with_most_rev.total_money }} Baht</h3>
-            {% else %}
-                <h3 class="card-label mx-3 "> No category </h3>
-            {% endif %}
+        <div class="col-lg-6 mt-3">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card shadow my-3 h-100">
+                        <h5 class="card-title mx-3 my-3">Average enrollment per user</h5>
+                        <h6 class="card-label mx-3 ">{{ avg_num_enroll }} course per person</h6>
+                    </div> 
+                </div>
+                <div class="col-lg-6 mb-4">   
+                    <div class="card shadow my-3 h-100">
+                        <h5 class="card-title mx-3 my-3">Average course per tutor</h5>
+                        <h6 class="card-label mx-3 ">{{ avg_course_per_tutor }} course per tutor</h6>
+                    </div> 
+                </div>
+            </div>
+            <div class="col-lg-12 mb-4">
+                <div class="card shadow my-3">
+                    <h5 class="card-title mx-3 my-3">Category that makes the most money</h5>
+                    {% if ctg_with_most_rev.total_money %}
+                        <h6 class="card-label mx-3 ">{{ ctg_with_most_rev.category_name }} : {{ ctg_with_most_rev.total_money }} Baht</h6>
+                    {% else %}
+                        <h6 class="card-label mx-3 "> No category </h6>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-
+    </div>
     </div>
 </body>
 {% endblock %}
