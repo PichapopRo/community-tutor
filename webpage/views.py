@@ -147,11 +147,24 @@ class StatisticView(generic.TemplateView):
             return [tutor.username for tutor in top_tutor]
         else:
             return None
+        
+    def get_popular_course_name(self, number: int) -> list[Session] | None:
+        session_with_participant_counts = (
+            Session.objects
+            .annotate(total_participants=Count('participants'))
+        )
+        
+        top_sessions = session_with_participant_counts.order_by('-total_participants')[:number]
+        if top_sessions:
+            return top_sessions
+        else:
+            return None
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         NUMBER_OF_POPULAR_TUTORS = 5    
         context =  super().get_context_data(**kwargs)
         context["popular_tutors"] = self.get_popular_tutor_name(NUMBER_OF_POPULAR_TUTORS)
+        context["popular_sessions"] = self.get_popular_course_name(NUMBER_OF_POPULAR_TUTORS)
         
         
         return context
