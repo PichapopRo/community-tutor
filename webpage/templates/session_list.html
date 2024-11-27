@@ -1,55 +1,78 @@
 {% extends "base.html" %}
-
 {% block content %}
-    <div class="container mt-3">
-  <script>
-    window.onload = (event) => {
-      const params = new Proxy(new URLSearchParams(window.location.search), {
-        get: (searchParams, prop) => searchParams.get(prop),
-      });
-      if (params.filter_option == null) return;
-      document.getElementById("opt" + params.filter_option).selected = true;
-    } ;
-  </script>
+<div class="container mt-3 pb-5">
+    <script>
+        window.onload = (event) => {
+            const params = new Proxy(new URLSearchParams(window.location.search), {
+                get: (searchParams, prop) => searchParams.get(prop),
+            });
+            if (params.filter_option == null) return;
+            document.getElementById("opt" + params.filter_option).selected = true;
+        };
+    </script>
 
-  <h1>Available Sessions</h1>
-  <form method="GET" action="{% url 'session-list' %}">
-      <select name="filter_option" id='filter_option' class="btn btn-outline-secondary">
-          <option value="">All</option>
-          {% for category in categories %}
-              <option value="{{ category.category_id }}" id="opt{{ category.category_id }}">{{ category.category_name }}</option>
-          {% endfor %}
-      </select>
-      <input type="submit" value="Filter" class="btn btn-primary">
-  </form>
+    <!-- Page Title -->
+    <h1 class="mb-4 text-light"><strong>Available Sessions</strong></h1>
 
-   {% if sessions %}
-    <div class="row">
-        {% for session in sessions %}
-        <div class="col mb-3">
-            <div class="card h-100 shadow">
-                <div class="card-body mt-3">
-                    <h3 class="card-title text-capitalize">{{ session.session_name }}</h3>
-                    <small class="card-text"><b>By:</b> {{ session.tutor_id.username }}</small>
-                    <span class="badge badge-primary">{{ session.category }}</span>
-                    <p>{{ session.start_date }} to {{ session.end_date }}</p>
-                    <p><b>at</b> {{ session.location }} </p>
-                    
-                    <a href="{% url 'session-detail' session.id %}" class="stretched-link"></a>
-                </div>
+    <!-- Filter Section -->
+    <form method="GET" action="{% url 'session-list' %}" class="mb-4">
+        <div class="row align-items-center">
+            <!-- Dropdown with 8 parts width -->
+            <div class="col-9">
+                <select name="filter_option" id="filter_option" class="form-select bg-dark text-light">
+                    <option value="">All</option>
+                    {% for category in categories %}
+                        <option value="{{ category.category_id }}" id="opt{{ category.category_id }}">
+                            {{ category.category_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Button with 2 parts width -->
+            <div class="col-3">
+                <button type="submit" class="btn btn-info w-100 text-dark"><strong>Filter</strong></button>
             </div>
         </div>
-        {% endfor %}
-    </div>
+    </form>
+
+    <!-- Sessions List -->
+    {% if sessions %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for session in sessions %}
+                <div class="col">
+                    <div class="card h-100 shadow bg-dark text-light">
+                        <div class="card-body">
+                            <h3 class="card-title"><strong>{{ session.session_name }}</strong></h3>
+                            <p class="card-text">
+                                <span class="badge bg-info text-dark">{{ session.category }}</span>
+                                {% if session.fee == 0 %}
+                                    <span class="badge bg-success text-light">FREE</span>
+                                {% else %}
+                                    <span class="badge bg-danger text-light">{{ session.fee }} ฿</span>
+                                {%  endif %}
+                            </p>
+                            <p class="card-text">
+                                <small>By: {{ session.tutor_id.username }}</small>
+                            </p>
+                            <p>{{ session.start_date }} - {{ session.end_date }}</p>
+                            <p>At {{ session.location }}</p>
+                            <a href="{% url 'session-detail' session.id %}" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <p class="mt-3">There are no available sessions at the moment.</p>
+        <p class="mt-3 text-danger"><strong>There are no available sessions at the moment.</strong></p>
     {% endif %}
+
+    <!-- Add Session Button -->
     {% if user.is_authenticated %}
-    <div class="position-absolute bottom-0 end-0 mx-3">
-        <a href="{% url 'session-create' %}" class="btn btn-primary mb-3 rounded-circle">
-            <i class="bi bi-plus"></i>
-        </a>
-    </div>
+        <div class="position-fixed bottom-0 end-0 m-4">
+            <a href="{% url 'session-create' %}" class="btn btn-info btn-lg rounded-circle shadow">
+                <i class="bi bi-plus"></i>
+            </a>
+        </div>
     {% endif %}
-{% endblock %}
 </div>
+{% endblock %}

@@ -1,37 +1,44 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Login</h2>
-<form method="post" id="login-form">
-    {% csrf_token %}
-    {% if messages %}
-    <div class="alert alert-danger">
-        {% for message in messages %}
-        <p>{{ message }}</p>
-        {% endfor %}
+    <div class="container mt-3 pb-5">
+        <h1 class="mb-4 text-light"><strong>Login</strong></h1>
+        <form method="post" id="login-form">
+            {% csrf_token %}
+            {% if messages %}
+                <div class="alert alert-danger">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="form-group mb-3">
+                <h5 for="{{ form.username.id_for_label }}" class="text-light">Username</h5>
+            <div class="col-md-3">
+                <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" class="form-control bg-dark text-light" value="{{ form.username.value }}" />
+            </div>
+                {% if form.username.errors %}
+                <div class="text-danger">
+                    {% for error in form.username.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="form-group mb-3">
+                <h5 for="{{ form.password.id_for_label }}" class="text-light">Password</h5>
+            <div class="col-md-3">
+                <input type="password" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" class="form-control bg-dark text-light" value="{{ form.password.value }}" />
+            </div>
+                {% if form.password.errors %}
+                <div class="text-danger">
+                    {% for error in form.password.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-info text-dark"><strong>Login</strong></button>
+        </form>
     </div>
-    {% endif %}
-    <div class="form-group">
-        <label for="{{ form.username.id_for_label }}">Username</label>
-        {{ form.username }}
-        {% if form.username.errors %}
-        <div class="text-danger">
-            {% for error in form.username.errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-    <div class="form-group">
-        <label for="{{ form.password.id_for_label }}">Password</label>
-        {{ form.password }}
-        {% if form.password.errors %}
-        <div class="text-danger">
-            {% for error in form.password.errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
 {% endblock %}
