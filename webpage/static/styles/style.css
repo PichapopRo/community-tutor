@@ -17,3 +17,12 @@ body{
 i{
     font-size: 24px;
 }
+.card {
+  border-left: 2px solid royalblue;
+}
+.card-title{
+    color: royalblue;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
