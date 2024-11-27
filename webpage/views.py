@@ -8,12 +8,14 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
 from webpage.forms import UserRegistrationForm, UserInfoForm, SessionForm
-from webpage.models import Session, Address, Category
+from webpage.models import Session, Address, Category, Transaction
 from webpage.forms import SessionForm
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 
 logger = logging.getLogger("Views.py")
+
 
 def register(request):
     if request.method == 'POST':
@@ -36,7 +38,8 @@ def register(request):
             user_info = user_info_form.save(commit=False)
             user_info.user = user
             user_info.address = address
-            user_info.date_of_birth = user_info_form.cleaned_data['date_of_birth']
+            user_info.date_of_birth = user_info_form.cleaned_data[
+                'date_of_birth']
             user_info.save()
             login(request, user)
             return redirect('session-list')
@@ -75,6 +78,7 @@ def signout_view(request):
     logout(request)
     return redirect("session-list")
 
+
 class SessionView(generic.ListView):
     model = Session
     context_object_name = 'sessions'
@@ -83,15 +87,16 @@ class SessionView(generic.ListView):
     def get_queryset(self):
         options = self.request.GET.get("filter_option")
         if options:
-            all_sessions = Session.objects.filter(category__category_id = options)
+            all_sessions = Session.objects.filter(
+                category__category_id=options)
         else:
             all_sessions = Session.objects.all()
         return [session for session in all_sessions if session.can_apply()]
-    
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
-        
+
         return context
 
 
@@ -138,10 +143,21 @@ def join_session(request, pk):
         return redirect('session-detail', pk=pk)
 
     if request.user in session.participants.all():
-        messages.warning(request, "You are already a participant in this session.")
+        messages.warning(request,
+                         "You are already a participant in this session.")
     else:
-        session.participants.add(request.user)
-        messages.success(request, "You have successfully joined the session.")
+        current_datetime = timezone.now()
+        transaction = Transaction(
+            session_id=session,
+            learner=request.user,
+            tutor=session.tutor_id,
+            date=current_datetime.date(),
+            time=current_datetime.time(),
+            fee=session.fee,
+            status='pending'
+        )
+        transaction.save()
+        messages.success(request, "You have successfully applied the session.")
     return redirect('session-detail', pk=pk)
 
 

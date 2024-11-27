@@ -1,7 +1,7 @@
 from datetime import datetime
-
 from django.db import models
 from django.contrib.auth.models import User
+
 
 class Address(models.Model):
     address_id = models.AutoField(primary_key=True)
@@ -35,12 +35,17 @@ class Session(models.Model):
     location = models.CharField(max_length=255)
     maximum_participant = models.IntegerField(default=1, null=False)
     participants = models.ManyToManyField(User, related_name='joined_sessions', blank=True)
+    fee = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=False)
 
     def can_apply(self):
         return datetime.now().date() < self.start_date.date()
 
     def is_full(self):
         return self.participants.count() >= self.maximum_participant
+
+    def applicants(self):
+        return User.objects.filter(learner_transactions__session_id=self,
+                                   learner_transactions__status='pending')
 
     def __str__(self):
         return f"{self.category} - {self.start_date} to {self.end_date}"
@@ -55,26 +60,19 @@ class Category(models.Model):
 
 
 class Transaction(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('enrolled', 'Enrolled'),
+        ('cancelled', 'Cancelled')
+    ]
     transaction_id = models.AutoField(primary_key=True)
     session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
     learner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='learner_transactions')
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_transactions')
     date = models.DateField()
     time = models.TimeField()
-    duration = models.DurationField()
-    fee = models.DecimalField(max_digits=10, decimal_places=2)
+    fee = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=False)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
         return f"Transaction {self.transaction_id} - {self.learner} and {self.tutor}"
-
-
-class Enroll(models.Model):
-    enroll_id = models.AutoField(primary_key=True)
-    student_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    session = models.ForeignKey(Session, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('student_id', 'session')
-
-    def __str__(self):
-        return f"Enrollment: {self.student_id} in {self.session}"
