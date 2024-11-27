@@ -131,8 +131,8 @@ def investor(request):
     return render(request, 'investor.html')
 
 
-def statistics(request):
-    return render(request, 'statistics.html')
+class StatisticView(generic.TemplateView):
+    template_name = 'statistics.html'
 
 
 def join_session(request, pk):
