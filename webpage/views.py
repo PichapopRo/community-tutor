@@ -13,7 +13,9 @@ from webpage.forms import SessionForm
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
+from django.db.models import Count, OuterRef, Subquery, Avg, Q, Sum
 from django.contrib.auth.models import User
+from typing import Iterable
 
 logger = logging.getLogger("Views.py")
 
@@ -132,8 +134,99 @@ def investor(request):
     return render(request, 'investor.html')
 
 
-def statistics(request):
-    return render(request, 'statistics.html')
+class StatisticView(generic.TemplateView):
+    template_name = 'statistics.html'
+    
+    def get_popular_tutor_name(self, number: int) -> list[str] | None:
+        tutors_with_participant_counts = (
+            User.objects
+            .annotate(total_participants=Count('joined_sessions'))
+        )
+        
+        top_tutor = tutors_with_participant_counts.order_by('-total_participants')[:number]
+        if top_tutor:
+            return [tutor.username for tutor in top_tutor]
+        else:
+            return None
+        
+    def get_popular_course(self, number: int) -> Iterable[Session] | None:
+        session_with_participant_counts = (
+            Session.objects
+            .annotate(total_participants=Count('participants'))
+        )
+        
+        top_sessions = session_with_participant_counts.order_by('-total_participants')[:number]
+        if top_sessions:
+            return top_sessions
+        else:
+            return None
+        
+    def get_popular_category(self, number) -> list[Category] | None:
+        category_with_participant_counts = (
+            Category.objects
+            .annotate(total_participants=Count('session__participants'))
+        )
+        top_categories = category_with_participant_counts.order_by('-total_participants')[:number]
+        if top_categories:
+            return [category.category_name for category in top_categories]
+        else:
+            return None
+        
+    def get_top_5_of_each_category(self):
+        # Step 1: Annotate tutors with participant counts per category
+        tutors_with_participant_counts = (
+            User.objects
+            .annotate(total_participants=Count('joined_sessions'))
+        )
+
+        # Step 2: Get top 5 tutors for each category
+        top_tutors_per_category = {}
+
+        for category in Category.objects.all():
+            # Filter tutors who have sessions in the current category
+            tutors = (
+                tutors_with_participant_counts
+                .filter(session__category=category)
+                .order_by('-total_participants')[:5]  # Get top 5 tutors
+            )
+
+            top_tutors_per_category[category.category_name] = list(tutors)
+
+        return top_tutors_per_category
+
+    def get_avg_enrollment_per_user(self) -> float:
+        average = User.objects.annotate(num_enroll=Count("joined_sessions")).aggregate(Avg("num_enroll"))
+        return average['num_enroll__avg']
+    
+    def get_avg_courses_per_tutor(self) -> float:
+        tutors_with_session_counts = User.objects.annotate(num_courses=Count('session'))
+
+        tutors_with_sessions = tutors_with_session_counts.filter(num_courses__gt=0)
+
+        average = tutors_with_sessions.aggregate(Avg('num_courses'))    
+        return average['num_courses__avg']
+    
+    def get_catagory_with_most_revenue(self):
+        category_with_participant_counts = (
+            Category.objects
+            .annotate(total_money=Sum('session__transaction__fee'))
+        )
+        top_categories = category_with_participant_counts.order_by('-total_money').first()
+        
+        return top_categories
+        
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        NUMBER_OF_POPULAR_TUTORS = 5    
+        context =  super().get_context_data(**kwargs)
+        context["popular_tutors"] = self.get_popular_tutor_name(NUMBER_OF_POPULAR_TUTORS)
+        context["popular_sessions"] = self.get_popular_course(NUMBER_OF_POPULAR_TUTORS)
+        context['popular_categories'] = self.get_popular_category(NUMBER_OF_POPULAR_TUTORS)
+        context['popular_per_category'] = self.get_top_5_of_each_category()
+        context['avg_num_enroll'] = self.get_avg_enrollment_per_user()
+        context['avg_course_per_tutor'] = self.get_avg_courses_per_tutor()
+        context['ctg_with_most_rev'] = self.get_catagory_with_most_revenue()
+
+        return context
 
 
 def apply_session(request, pk):

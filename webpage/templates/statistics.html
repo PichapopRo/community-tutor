@@ -6,13 +6,74 @@
     <div class="container mt-3 mx-3">
         <h1 class="mx-auto">Statistics Page!</h1>
         <div class="card my-3">
-            <h5 class="card-title mx-3 my-3">Popular Course</h5>
-                <h3 class="card-label mx-3 ">Number</h3>
+            <h5 class="card-title mx-3 my-3">Top 5 Most Popular Sessions</h5>
+                {% if not popular_sessions %}
+                    <h3 class="card-label mx-3 ">Not Available</h3>
+                {% else %}
+                    {% for session in popular_sessions %}
+                        <h3 class="card-label mx-3 ">{{ session.session_name }} by: {{ session.tutor_id.username}} </h3>
+                    {% endfor %}
+
+                {% endif %}
         </div>
+
         <div class="card my-3">
-            <h5 class="card-title mx-3 my-3">Popular Tutor</h5>
-                <h3 class="card-label mx-3 ">Number</h3>
+            <h5 class="card-title mx-3 my-3">Top 5 Most Popular Tutor</h5>
+                {% if not popular_tutors %}
+                    <h3 class="card-label mx-3 ">Not Available</h3>
+                {% else %}
+                    {% for tutor_name in popular_tutors %}
+                        <h3 class="card-label mx-3 ">{{ tutor_name }}</h3>
+                    {% endfor %}
+
+                {% endif %}
         </div>
+
+        <div class="card my-3">
+            <h5 class="card-title mx-3 my-3">Top 5 Most Popular Categories</h5>
+                {% if not popular_categories %}
+                    <h3 class="card-label mx-3 ">Not Available</h3>
+                {% else %}
+                    {% for category_name in popular_categories %}
+                        <h3 class="card-label mx-3 ">{{ category_name }}</h3>
+                    {% endfor %}
+
+                {% endif %}
+        </div>
+
+        <div class="card my-3">
+            <h5 class="card-title mx-3 my-3">Top 5 Most Popular People Per Category</h5>
+                {% for category_name, tutors in popular_per_category.items %}
+                    <h3 class="card-label mx-3 "><b>{{ category_name }}</b></h3>
+                    {% if tutors %}
+                        {% for tutor in tutors %}
+                            <h3 class="card-label mx-3 ">{{ tutor.username }} with {{ tutor.total_participants }} participants.</h3>
+                        {% endfor %}
+                    {% else %}
+                        <h3 class="card-label mx-3 ">None.</h3>
+                    {% endif %}
+                {% endfor %}
+        </div>
+
+        <div class="card my-3">
+            <h5 class="card-title mx-3 my-3">Average enrollment per user</h5>
+            <h3 class="card-label mx-3 ">{{ avg_num_enroll }} course per person</h3>
+        </div> 
+        
+        <div class="card my-3">
+            <h5 class="card-title mx-3 my-3">Average course per tutor</h5>
+            <h3 class="card-label mx-3 ">{{ avg_course_per_tutor }} course per tutor</h3>
+        </div> 
+
+        <div class="card my-3">
+            <h5 class="card-title mx-3 my-3">Category that makes the most money</h5>
+            {% if ctg_with_most_rev.total_money %}
+                <h3 class="card-label mx-3 ">{{ ctg_with_most_rev.category_name }} : {{ ctg_with_most_rev.total_money }} Baht</h3>
+            {% else %}
+                <h3 class="card-label mx-3 "> No category </h3>
+            {% endif %}
+        </div>
+
     </div>
 </body>
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from .views import SessionCreateView, SessionDetailView
+from .views import SessionCreateView, SessionDetailView, StatisticView
 
 urlpatterns = [
     path("", views.SessionView.as_view(), name="session-list"),
@@ -12,5 +12,5 @@ urlpatterns = [
     path("session/<int:pk>/", SessionDetailView.as_view(), name="session-detail"),
     path('create/', SessionCreateView.as_view(), name='session-create'),
     path("investor", views.investor, name="investor"),
-    path("statistics", views.statistics, name="statistics")
+    path("statistics", StatisticView.as_view(), name="statistics")
 ]
