@@ -25,7 +25,16 @@
     {% endfor %}
   </ul>
 
-  {% if request.user != session.tutor_id %}
+    {% if request.user == session.tutor_id %}
+        <h3>Applicants</h3>
+          <ul>
+    {% for applicant in session.pending_learners %}
+      <li>{{ applicant.username }}</li>
+    {% empty %}
+      <p>No applicants yet.</p>
+    {% endfor %}
+  </ul>
+  {% else %}
     {% if not request.user.is_authenticated %}
       <h5>Login to join any sessions</h5>
     {% elif request.user in session.participants.all %}
