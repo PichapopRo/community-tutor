@@ -13,7 +13,7 @@ from webpage.forms import SessionForm
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
-from django.db.models import Count, OuterRef, Subquery, Avg, Q
+from django.db.models import Count, OuterRef, Subquery, Avg, Q, Sum
 from django.contrib.auth.models import User
 from typing import Iterable
 
@@ -205,6 +205,15 @@ class StatisticView(generic.TemplateView):
 
         average = tutors_with_sessions.aggregate(Avg('num_courses'))    
         return average['num_courses__avg']
+    
+    def get_catagory_with_most_revenue(self):
+        category_with_participant_counts = (
+            Category.objects
+            .annotate(total_money=Sum('session__transaction__fee'))
+        )
+        top_categories = category_with_participant_counts.order_by('-total_money').first()
+        
+        return top_categories
         
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         NUMBER_OF_POPULAR_TUTORS = 5    
@@ -215,6 +224,7 @@ class StatisticView(generic.TemplateView):
         context['popular_per_category'] = self.get_top_5_of_each_category()
         context['avg_num_enroll'] = self.get_avg_enrollment_per_user()
         context['avg_course_per_tutor'] = self.get_avg_courses_per_tutor()
+        context['ctg_with_most_rev'] = self.get_catagory_with_most_revenue()
 
         return context
 
