@@ -138,9 +138,13 @@ class StatisticView(generic.TemplateView):
     template_name = 'statistics.html'
     
     def get_popular_tutor_name(self, number: int) -> list[str] | None:
+        tutors_with_session_counts = User.objects.annotate(num_courses=Count('session'))
+
+        tutors_with_sessions = tutors_with_session_counts.filter(num_courses__gt=0)
+        
         tutors_with_participant_counts = (
-            User.objects
-            .annotate(total_participants=Count('joined_sessions'))
+            tutors_with_sessions
+            .annotate(total_participants=Count('session__participants'))
         )
         
         top_tutor = tutors_with_participant_counts.order_by('-total_participants')[:number]
@@ -174,9 +178,11 @@ class StatisticView(generic.TemplateView):
         
     def get_top_5_of_each_category(self):
         # Step 1: Annotate tutors with participant counts per category
+        tutors_with_session_counts = User.objects.annotate(num_courses=Count('session'))
+        tutors_with_sessions = tutors_with_session_counts.filter(num_courses__gt=0)
         tutors_with_participant_counts = (
-            User.objects
-            .annotate(total_participants=Count('joined_sessions'))
+            tutors_with_sessions
+            .annotate(total_participants=Count('session__participants'))
         )
 
         # Step 2: Get top 5 tutors for each category
