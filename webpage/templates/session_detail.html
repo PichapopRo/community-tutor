@@ -29,10 +29,20 @@
         <h3>Applicants</h3>
           <ul>
     {% for applicant in session.applicants %}
-      <li>{{ applicant.username }}</li>
-    {% empty %}
-      <p>No applicants yet.</p>
-    {% endfor %}
+  <div class="d-flex justify-content-start align-items-center mb-2">
+    <p class="mb-0 mr-2">{{ applicant.username }}</p>
+<form method="post" action="{% url 'accept-session' session.pk applicant.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success mr-2">Accept</button>
+</form>
+    <form method="post" action="{% url 'cancel-session' session.pk applicant.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Cancel</button>
+    </form>
+  </div>
+{% empty %}
+  <p>No applicants yet.</p>
+{% endfor %}
   </ul>
   {% else %}
     {% if not request.user.is_authenticated %}
@@ -42,10 +52,12 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-warning">Leave Session</button>
       </form>
+    {% elif request.user in session.applicants %}
+        <p>You have applied for this session and are pending approval.</p>
     {% elif not session.is_full %}
-      <form method="post" action="{% url 'join-session' session.pk %}">
+      <form method="post" action="{% url 'apply-session' session.pk %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Join Session</button>
+        <button type="submit" class="btn btn-primary">Apply Session</button>
       </form>
     {% else %}
       <p>The session is full.</p>

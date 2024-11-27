@@ -63,10 +63,11 @@ class Transaction(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('enrolled', 'Enrolled'),
-        ('cancelled', 'Cancelled')
+        ('cancelled', 'Cancelled'),
+        ('left', 'Left')
     ]
     transaction_id = models.AutoField(primary_key=True)
-    session_id = models.ForeignKey(Session, on_delete=models.CASCADE)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
     learner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='learner_transactions')
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_transactions')
     date = models.DateField()

@@ -13,6 +13,7 @@ from webpage.forms import SessionForm
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 logger = logging.getLogger("Views.py")
 
@@ -135,20 +136,20 @@ def statistics(request):
     return render(request, 'statistics.html')
 
 
-def join_session(request, pk):
+def apply_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
-
-    if session.is_full():
-        messages.error(request, "This session is already full.")
-        return redirect('session-detail', pk=pk)
-
-    if request.user in session.participants.all():
-        messages.warning(request,
-                         "You are already a participant in this session.")
+    if Transaction.objects.filter(session=session,
+                                  learner=request.user,
+                                  status='cancelled').first():
+        transaction = Transaction.objects.get(session=session,
+                                              learner=request.user,
+                                              status='cancelled')
+        transaction.status = 'pending'
+        transaction.save()
     else:
         current_datetime = timezone.now()
         transaction = Transaction(
-            session_id=session,
+            session=session,
             learner=request.user,
             tutor=session.tutor_id,
             date=current_datetime.date(),
@@ -157,13 +158,47 @@ def join_session(request, pk):
             status='pending'
         )
         transaction.save()
-        messages.success(request, "You have successfully applied the session.")
+    messages.success(request, f"You have successfully applied "
+                              f"into {session.session_name}.")
     return redirect('session-detail', pk=pk)
 
 
-@login_required
+def accept_session(request, session_id, applicant_id):
+    session = get_object_or_404(Session, pk=session_id)
+    applicant = get_object_or_404(User, pk=applicant_id)
+    transaction = Transaction.objects.get(session=session,
+                                          learner=applicant,
+                                          status='pending')
+    transaction.status = 'enrolled'
+    transaction.save()
+    session.participants.add(applicant)
+    session.save()
+    messages.success(request, f"You have successfully accepted "
+                              f"{applicant.username} in {session.session_name}.")
+    return redirect('session-detail', pk=session_id)
+
+
+def cancel_session(request, session_id, applicant_id):
+    session = get_object_or_404(Session, pk=session_id)
+    applicant = get_object_or_404(User, pk=applicant_id)
+    transaction = Transaction.objects.get(session=session,
+                                          learner=applicant,
+                                          status='pending')
+    transaction.status = 'cancelled'
+    transaction.save()
+    messages.success(request, f"You have successfully cancelled "
+                              f"{applicant.username} in {session.session_name}.")
+    return redirect('session-detail', pk=session_id)
+
+
 def leave_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
-    if request.user in session.participants.all():
-        session.participants.remove(request.user)
+    transaction = Transaction.objects.get(session=session,
+                                          learner=request.user,
+                                          status='enrolled')
+    transaction.status = 'left'
+    transaction.save()
+    session.participants.remove(request.user)
+    messages.success(request, f"You have successfully left "
+                              f"{session.session_name}.")
     return redirect('session-detail', pk=pk)
