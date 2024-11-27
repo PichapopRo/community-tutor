@@ -11,6 +11,6 @@ urlpatterns = [
     path('session/<int:pk>/leave/', views.leave_session, name='leave-session'),
     path("session/<int:pk>/", SessionDetailView.as_view(), name="session-detail"),
     path('create/', SessionCreateView.as_view(), name='session-create'),
-    path("investor", views.investor, name="investor"),
+    path("investor/", views.investor, name="investor"),
     path("statistics", StatisticView.as_view(), name="statistics")
 ]
