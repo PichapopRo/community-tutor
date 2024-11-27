@@ -138,16 +138,18 @@ def statistics(request):
 
 def apply_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
-    payment_id = request.POST.get('payment_id')
+    current_datetime = timezone.now()
+    payment_id = request.POST.get('payment_id', '')
     try:
         transaction = Transaction.objects.get(session=session,
                                               learner=request.user,
                                               status='cancelled')
-        transaction.payment_id = payment_id
+        transaction.date = current_datetime.date()
+        transaction.time = current_datetime.time()
         transaction.status = 'pending'
+        transaction.payment_id = payment_id
         transaction.save()
     except Transaction.DoesNotExist:
-        current_datetime = timezone.now()
         transaction = Transaction(
             session=session,
             learner=request.user,
@@ -159,8 +161,6 @@ def apply_session(request, pk):
             status='pending'
         )
         transaction.save()
-    messages.success(request, f"You have successfully applied "
-                              f"into {session.session_name}.")
     return redirect('session-detail', pk=pk)
 
 
@@ -174,8 +174,6 @@ def accept_session(request, session_id, applicant_id):
     transaction.save()
     session.participants.add(applicant)
     session.save()
-    messages.success(request, f"You have successfully accepted "
-                              f"{applicant.username} in {session.session_name}.")
     return redirect('session-detail', pk=session_id)
 
 
@@ -187,8 +185,6 @@ def cancel_session(request, session_id, applicant_id):
                                           status='pending')
     transaction.status = 'cancelled'
     transaction.save()
-    messages.success(request, f"You have successfully cancelled "
-                              f"{applicant.username} in {session.session_name}.")
     return redirect('session-detail', pk=session_id)
 
 
@@ -200,6 +196,4 @@ def leave_session(request, pk):
     transaction.status = 'left'
     transaction.save()
     session.participants.remove(request.user)
-    messages.success(request, f"You have successfully left "
-                              f"{session.session_name}.")
     return redirect('session-detail', pk=pk)

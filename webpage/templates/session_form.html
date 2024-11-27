@@ -2,124 +2,157 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
 </head>
+
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 {% extends "base.html" %}
+{% load widget_tweaks %}
 
 {% block content %}
-<body>
-  <div class="container mx-3">
-    <h1>Create New Session</h1>
+  <div class="container mt-3 pb-5">
+    <h1 class="mb-4 text-light"><strong>Create New Session</strong></h1>
     <div class="row">
       <div class="col-md-12">
         <form method="post" id="session-form">
           {% csrf_token %}
-          <div class="col col-md-6">
-            <div class="mb-3">
-              <h5>{{ form.category.label }}</h5>
-              <label for="{{ form.category.id_for_label }}"></label>
-              {{ form.category }}
-              {% if form.category.errors %}
-                <div class="text-danger">
-                  {% for error in form.category.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
+          <div class="row">
+            <!-- First Column -->
+            <div class="col-md-6 text-light">
+
+              <!-- Category -->
+              <div class="mb-3">
+                <h5>{{ form.category.label }}</h5>
+                <div class="col-md-9">
+                  {{ form.category|add_class:"form-select bg-dark text-light" }}
                 </div>
-              {% endif %}
-            </div>
-            <div class="mb-3">
-              <h5>{{ form.session_description.label }}</h5>
-              {{ form.session_description }}
-              <label class="text-area" for="{{ form.session_description.id_for_label }}"></label>
-              {% if form.session_description.errors %}
-                <div class="text-danger">
-                  {% for error in form.session_description.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
+                {% if form.category.errors %}
+                  <div class="text-danger">
+                    {% for error in form.category.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Session Name -->
+              <div class="mb-3">
+                <h5>{{ form.session_name.label }}</h5>
+                <div class="col-md-9">
+                  {{ form.session_name|add_class:"form-control bg-dark text-light" }}
                 </div>
-              {% endif %}
-            </div>
-            <div class="mb-3">
-              <h5>{{ form.session_name.label }}</h5>
-              {{ form.session_name }}
-              <label class="text-area" for="{{ form.session_name.id_for_label }}"></label>
-              {% if form.session_name.errors %}
-                <div class="text-danger">
-                  {% for error in form.session_name.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
+                {% if form.session_name.errors %}
+                  <div class="text-danger">
+                    {% for error in form.session_name.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Description -->
+              <div class="mb-3">
+                <h5>{{ form.session_description.label }}</h5>
+                <div class="col-md-9">
+                  {{ form.session_description|add_class:"form-control bg-dark text-light" }}
                 </div>
-              {% endif %}
+                {% if form.session_description.errors %}
+                  <div class="text-danger">
+                    {% for error in form.session_description.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
             </div>
-            <div class="mb-3">
-              <h5>{{ form.start_date.label }}</h5>
-              <label for="{{ form.start_date.id_for_label }}"></label>
-              {{ form.start_date }}
-              {% if form.start_date.errors %}
-                <div class="text-danger">
-                  {% for error in form.start_date.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
+
+            <!-- Second Column -->
+            <div class="col-md-6 text-light">
+
+              <!-- Start Date -->
+              <div class="mb-3">
+                <h5>{{ form.start_date.label }}</h5>
+                <div class="col-md-7">
+                  {{ form.start_date|add_class:"form-select bg-dark text-light" }}
                 </div>
-              {% endif %}
+                {% if form.start_date.errors %}
+                  <div class="text-danger">
+                    {% for error in form.start_date.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- End Date -->
+              <div class="mb-3">
+                <h5>{{ form.end_date.label }}</h5>
+                <div class="col-md-7">
+                  {{ form.end_date|add_class:"form-select bg-dark text-light" }}
+                </div>
+                {% if form.end_date.errors %}
+                  <div class="text-danger">
+                    {% for error in form.end_date.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Location -->
+              <div class="mb-3">
+                <h5>{{ form.location.label }}</h5>
+                <div class="col-md-7">
+                  {{ form.location|add_class:"form-control bg-dark text-light" }}
+                </div>
+                {% if form.location.errors %}
+                  <div class="text-danger">
+                    {% for error in form.location.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Maximum Participants -->
+              <div class="mb-3">
+                <h5>{{ form.maximum_participant.label }}</h5>
+                <div class="col-md-5">
+                  {{ form.maximum_participant|add_class:"form-control bg-dark text-light" }}
+                </div>
+                {% if form.maximum_participant.errors %}
+                  <div class="text-danger">
+                    {% for error in form.maximum_participant.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Fee -->
+              <div class="mb-3">
+                <h5>{{ form.fee.label }}</h5>
+                <div class="col-md-5">
+                  {{ form.fee|add_class:"form-control bg-dark text-light" }}
+                </div>
+                {% if form.fee.errors %}
+                  <div class="text-danger">
+                    {% for error in form.fee.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
             </div>
+
           </div>
 
-          <div class="col col-md-6">
-            <div class="mb-3">
-              <h5>{{ form.end_date.label }}</h5>
-              <label for="{{ form.end_date.id_for_label }}"></label>
-              {{ form.end_date }}
-              {% if form.end_date.errors %}
-                <div class="text-danger">
-                  {% for error in form.end_date.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
-            <div class="mb-3">
-              <h5>{{ form.location.label }}</h5>
-              <label for="{{ form.location.id_for_label }}"></label>
-              {{ form.location }}
-              {% if form.location.errors %}
-                <div class="text-danger">
-                  {% for error in form.location.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
-            <div class="mb-3">
-              <h5>{{ form.maximum_participant.label }}</h5>
-              <label for="{{ form.maximum_participant.id_for_label }}"></label>
-              {{ form.maximum_participant }}
-              {% if form.maximum_participant.errors %}
-                <div class="text-danger">
-                  {% for error in form.maximum_participant.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
-            <div class="mb-3">
-              <h5>{{ form.fee.label }}</h5>
-              <label for="{{ form.fee.id_for_label }}"></label>
-              {{ form.fee }}
-              {% if form.fee.errors %}
-                <div class="text-danger">
-                  {% for error in form.fee.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-info text-dark"><strong>Submit</strong></button>
         </form>
 
         <script>
+          // Initialize flatpickr on the input fields
           flatpickr("input[name='start_date']", {
             enableTime: true,
             dateFormat: "Y-m-d H:i",
@@ -135,5 +168,4 @@
       </div>
     </div>
   </div>
-</body>
 {% endblock %}
