@@ -7,7 +7,7 @@
   <!-- Details Section -->
   <div class="card bg-dark text-light mb-4">
     <div class="card-body">
-        <h2><strong>{{ session.session_name }}</strong></h2>
+        <h2 class="mb-4"><strong>{{ session.session_name }}</strong></h2>
         <p class="card-text">
             <span class="badge bg-info text-dark">{{ session.category }}</span>
             {% if session.fee == 0 %}
@@ -16,20 +16,24 @@
                 <span class="badge bg-danger text-light">{{ session.fee }} ฿</span>
             {%  endif %}
         </p>
-      <p><strong>Your tutor:</strong> {{ session.tutor_id.username }}</p>
-      <p><strong>The tutor's PromptPay ID:</strong> {{ session.get_tutor_info.phone_number }}</p>
-      <p><strong>Start Date:</strong> {{ session.start_date }}</p>
-      <p><strong>End Date:</strong> {{ session.end_date }}</p>
-      <p><strong>Location:</strong> {{ session.location }}</p>
-      <p><strong>Participants:</strong> {{ session.participants.count }} / {{ session.maximum_participant }}</p>
-      <p>{{ session.session_description }}</p>
+        {% if session.is_full %}
+            <p class="text-danger"><strong>Participants:</strong> {{ session.participants.count }} / {{ session.maximum_participant }}</p>
+        {% else %}
+            <p class="text-info"><strong>Participants:</strong> {{ session.participants.count }} / {{ session.maximum_participant }}</p>
+        {% endif %}
+        <p><strong>Your tutor:</strong> {{ session.tutor_id.username }}</p>
+        <p><strong>The tutor's PromptPay ID:</strong> {{ session.get_tutor_info.phone_number }}</p>
+        <p><strong>Start Date:</strong> {{ session.start_date }}</p>
+        <p><strong>End Date:</strong> {{ session.end_date }}</p>
+        <p><strong>Location:</strong> {{ session.location }}</p>
+        <p>{{ session.session_description }}</p>
     </div>
   </div>
 
   <!-- Participants Section -->
   <div class="card bg-dark text-light mb-4">
     <div class="card-body">
-      <h3>Participants</h3>
+      <h3 class="mb-4">Participants</h3>
       <ul>
         {% for participant in session.participants.all %}
           <li>{{ participant.username }}</li>
@@ -45,7 +49,7 @@
       <!-- Applicants Section -->
       <div class="card bg-dark text-light mb-4">
         <div class="card-body">
-          <h3>Applicants</h3>
+          <h3 class="mb-4">Applicants</h3>
           <ul>
             {% for transaction in session.get_pending_transactions %}
               <div class="d-flex justify-content-start align-items-center mb-2">
@@ -70,21 +74,21 @@
         </div>
       </div>
     {% else %}
-      <h5 class="text-primary mb-4"><strong>The session is full.</strong></h5>
+      <h5 class="text-primary mb-4"><strong><i class="bi bi-bag-x"></i> The session is full.</strong></h5>
     {% endif %}
   {% else %}
     <div>
       {% if not request.user.is_authenticated %}
-        <h5 class="text-danger mb-4"><strong>Login to join any sessions</strong></h5>
+        <h5 class="text-danger mb-4"><strong><i class="bi bi-person-plus-fill"></i> Login to join any sessions</strong></h5>
       {% elif request.user in session.participants.all %}
         <form method="post" action="{% url 'leave-session' session.pk %}" class="mb-4">
           {% csrf_token %}
           <button type="submit" class="btn btn-danger"><strong>Leave Session</strong></button>
         </form>
           {% elif session.is_full %}
-                  <h5 class="text-primary mb-4"><strong>The session is full.</strong></h5>
+                  <h5 class="text-primary mb-4"><strong><i class="bi bi-bag-x"></i> The session is full.</strong></h5>
       {% elif request.user in session.get_applicants %}
-        <p class="text-danger mb-4"><strong>You have applied for this session and are pending approval.</strong></p>
+        <p class="text-danger mb-4"><strong><i class="bi bi-arrow-repeat"></i> You have applied for this session and are pending approval.</strong></p>
       {% else %}
         <!-- Apply Session Section -->
           {% if session.fee != 0 %}
