@@ -28,6 +28,19 @@
 
                 {% endif %}
         </div>
+
+        <div class="card my-3">
+            <h5 class="card-title mx-3 my-3">Top 5 Most Popular Categories</h5>
+                {% if not popular_categories %}
+                    <h3 class="card-label mx-3 ">Not Available</h3>
+                {% else %}
+                    {% for category_name in popular_categories %}
+                        <h3 class="card-label mx-3 ">{{ category_name }}</h3>
+                    {% endfor %}
+
+                {% endif %}
+        </div>
+
     </div>
 </body>
 {% endblock %}

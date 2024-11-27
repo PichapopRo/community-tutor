@@ -15,6 +15,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.db.models import Count
 from django.contrib.auth.models import User
+from typing import Iterable
 
 logger = logging.getLogger("Views.py")
 
@@ -148,7 +149,7 @@ class StatisticView(generic.TemplateView):
         else:
             return None
         
-    def get_popular_course_name(self, number: int) -> list[Session] | None:
+    def get_popular_course(self, number: int) -> Iterable[Session] | None:
         session_with_participant_counts = (
             Session.objects
             .annotate(total_participants=Count('participants'))
@@ -159,12 +160,24 @@ class StatisticView(generic.TemplateView):
             return top_sessions
         else:
             return None
+        
+    def get_popular_category(self, number) -> list[Category] | None:
+        category_with_participant_counts = (
+            Category.objects
+            .annotate(total_participants=Count('session__participants'))
+        )
+        top_categories = category_with_participant_counts.order_by('-total_participants')[:number]
+        if top_categories:
+            return [category.category_name for category in top_categories]
+        else:
+            return None
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         NUMBER_OF_POPULAR_TUTORS = 5    
         context =  super().get_context_data(**kwargs)
         context["popular_tutors"] = self.get_popular_tutor_name(NUMBER_OF_POPULAR_TUTORS)
-        context["popular_sessions"] = self.get_popular_course_name(NUMBER_OF_POPULAR_TUTORS)
+        context["popular_sessions"] = self.get_popular_course(NUMBER_OF_POPULAR_TUTORS)
+        context['popular_categories'] = self.get_popular_category(NUMBER_OF_POPULAR_TUTORS)
         
         
         return context
