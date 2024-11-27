@@ -138,15 +138,15 @@ def statistics(request):
 
 def apply_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
-    if Transaction.objects.filter(session=session,
-                                  learner=request.user,
-                                  status='cancelled').first():
+    payment_id = request.POST.get('payment_id')
+    try:
         transaction = Transaction.objects.get(session=session,
                                               learner=request.user,
                                               status='cancelled')
+        transaction.payment_id = payment_id
         transaction.status = 'pending'
         transaction.save()
-    else:
+    except Transaction.DoesNotExist:
         current_datetime = timezone.now()
         transaction = Transaction(
             session=session,
@@ -155,6 +155,7 @@ def apply_session(request, pk):
             date=current_datetime.date(),
             time=current_datetime.time(),
             fee=session.fee,
+            payment_id=payment_id,
             status='pending'
         )
         transaction.save()

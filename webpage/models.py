@@ -43,9 +43,16 @@ class Session(models.Model):
     def is_full(self):
         return self.participants.count() >= self.maximum_participant
 
-    def applicants(self):
-        return User.objects.filter(learner_transactions__session_id=self,
-                                   learner_transactions__status='pending')
+    def get_tutor_info(self):
+        return UserInfo.objects.get(user=self.tutor_id)
+
+    def get_pending_transactions(self):
+        return self.transaction_set.filter(status='pending')
+
+    def get_applicants(self):
+        return User.objects.filter(
+            learner_transactions__session_id=self,
+            learner_transactions__status='pending')
 
     def __str__(self):
         return f"{self.category} - {self.start_date} to {self.end_date}"
@@ -68,12 +75,18 @@ class Transaction(models.Model):
     ]
     transaction_id = models.AutoField(primary_key=True)
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
-    learner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='learner_transactions')
-    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_transactions')
+    learner = models.ForeignKey(User, on_delete=models.CASCADE,
+                                related_name='learner_transactions')
+    tutor = models.ForeignKey(User, on_delete=models.CASCADE,
+                              related_name='tutor_transactions')
     date = models.DateField()
     time = models.TimeField()
-    fee = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=False)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    fee = models.DecimalField(max_digits=10, decimal_places=2,
+                              default=0, null=False)
+    payment_id = models.CharField(max_length=20, default='')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES,
+                              default='pending')
 
     def __str__(self):
-        return f"Transaction {self.transaction_id} - {self.learner} and {self.tutor}"
+        return (f"Transaction {self.transaction_id} - {self.learner.username} "
+                f"with {self.tutor.username}")
