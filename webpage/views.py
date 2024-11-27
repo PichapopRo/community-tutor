@@ -13,7 +13,7 @@ from webpage.forms import SessionForm
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, OuterRef, Subquery
 from django.contrib.auth.models import User
 from typing import Iterable
 
@@ -171,6 +171,33 @@ class StatisticView(generic.TemplateView):
             return [category.category_name for category in top_categories]
         else:
             return None
+        
+    def get_top_5_of_each_category(self):
+        # Step 1: Annotate tutors with participant counts per category
+        tutors_with_participant_counts = (
+            User.objects
+            .annotate(total_participants=Count('joined_sessions'))
+        )
+
+        # Step 2: Get top 5 tutors for each category
+        top_tutors_per_category = {}
+
+        for category in Category.objects.all():
+            # Filter tutors who have sessions in the current category
+            tutors = (
+                tutors_with_participant_counts
+                .filter(session__category=category)
+                .order_by('-total_participants')[:5]  # Get top 5 tutors
+            )
+
+            top_tutors_per_category[category.category_name] = list(tutors)
+
+        return top_tutors_per_category
+        # Output the results
+        for category_name, tutors in top_tutors_per_category.items():
+            print(f"Top Tutors in {category_name}:")
+            for tutor in tutors:
+                print(f"- {tutor.username}: {tutor.total_participants} participants")
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         NUMBER_OF_POPULAR_TUTORS = 5    
@@ -178,8 +205,8 @@ class StatisticView(generic.TemplateView):
         context["popular_tutors"] = self.get_popular_tutor_name(NUMBER_OF_POPULAR_TUTORS)
         context["popular_sessions"] = self.get_popular_course(NUMBER_OF_POPULAR_TUTORS)
         context['popular_categories'] = self.get_popular_category(NUMBER_OF_POPULAR_TUTORS)
-        
-        
+        context['popular_per_category'] = self.get_top_5_of_each_category()
+
         return context
 
 

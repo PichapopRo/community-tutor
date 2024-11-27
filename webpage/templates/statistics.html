@@ -41,6 +41,20 @@
                 {% endif %}
         </div>
 
+        <div class="card my-3">
+            <h5 class="card-title mx-3 my-3">Top 5 Most Popular People Per Category</h5>
+                {% for category_name, tutors in popular_per_category.items %}
+                    <h3 class="card-label mx-3 "><b>{{ category_name }}</b></h3>
+                    {% if tutors %}
+                        {% for tutor in tutors %}
+                            <h3 class="card-label mx-3 ">{{ tutor.username }} with {{ tutor.total_participants }} participants.</h3>
+                        {% endfor %}
+                    {% else %}
+                        <h3 class="card-label mx-3 ">None.</h3>
+                    {% endif %}
+                {% endfor %}
+        </div>
+
     </div>
 </body>
 {% endblock %}
