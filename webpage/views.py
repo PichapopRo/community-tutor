@@ -13,7 +13,7 @@ from webpage.forms import SessionForm
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
-from django.db.models import Count, OuterRef, Subquery, Avg
+from django.db.models import Count, OuterRef, Subquery, Avg, Q
 from django.contrib.auth.models import User
 from typing import Iterable
 
@@ -197,6 +197,14 @@ class StatisticView(generic.TemplateView):
     def get_avg_enrollment_per_user(self) -> float:
         average = User.objects.annotate(num_enroll=Count("joined_sessions")).aggregate(Avg("num_enroll"))
         return average['num_enroll__avg']
+    
+    def get_avg_courses_per_tutor(self) -> float:
+        tutors_with_session_counts = User.objects.annotate(num_courses=Count('session'))
+
+        tutors_with_sessions = tutors_with_session_counts.filter(num_courses__gt=0)
+
+        average = tutors_with_sessions.aggregate(Avg('num_courses'))    
+        return average['num_courses__avg']
         
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         NUMBER_OF_POPULAR_TUTORS = 5    
@@ -206,6 +214,7 @@ class StatisticView(generic.TemplateView):
         context['popular_categories'] = self.get_popular_category(NUMBER_OF_POPULAR_TUTORS)
         context['popular_per_category'] = self.get_top_5_of_each_category()
         context['avg_num_enroll'] = self.get_avg_enrollment_per_user()
+        context['avg_course_per_tutor'] = self.get_avg_courses_per_tutor()
 
         return context
 
