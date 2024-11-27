@@ -125,7 +125,6 @@ def investor(request):
     user_count = UserInfo.objects.count()
     enrollment_count = Enroll.objects.count()
     session_count = Session.objects.count()
-
     context = {
         'user_count': user_count,
         'enrollment_count': enrollment_count,
