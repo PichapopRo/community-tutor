@@ -229,35 +229,70 @@ class StatisticView(generic.TemplateView):
         return context
 
 
-def join_session(request, pk):
+def apply_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
-
-    if session.is_full():
-        messages.error(request, "This session is already full.")
-        return redirect('session-detail', pk=pk)
-
-    if request.user in session.participants.all():
-        messages.warning(request,
-                         "You are already a participant in this session.")
-    else:
+    payment_id = request.POST.get('payment_id')
+    try:
+        transaction = Transaction.objects.get(session=session,
+                                              learner=request.user,
+                                              status='cancelled')
+        transaction.payment_id = payment_id
+        transaction.status = 'pending'
+        transaction.save()
+    except Transaction.DoesNotExist:
         current_datetime = timezone.now()
         transaction = Transaction(
-            session_id=session,
+            session=session,
             learner=request.user,
             tutor=session.tutor_id,
             date=current_datetime.date(),
             time=current_datetime.time(),
             fee=session.fee,
+            payment_id=payment_id,
             status='pending'
         )
         transaction.save()
-        messages.success(request, "You have successfully applied the session.")
+    messages.success(request, f"You have successfully applied "
+                              f"into {session.session_name}.")
     return redirect('session-detail', pk=pk)
 
 
-@login_required
+def accept_session(request, session_id, applicant_id):
+    session = get_object_or_404(Session, pk=session_id)
+    applicant = get_object_or_404(User, pk=applicant_id)
+    transaction = Transaction.objects.get(session=session,
+                                          learner=applicant,
+                                          status='pending')
+    transaction.status = 'enrolled'
+    transaction.save()
+    session.participants.add(applicant)
+    session.save()
+    messages.success(request, f"You have successfully accepted "
+                              f"{applicant.username} in {session.session_name}.")
+    return redirect('session-detail', pk=session_id)
+
+
+def cancel_session(request, session_id, applicant_id):
+    session = get_object_or_404(Session, pk=session_id)
+    applicant = get_object_or_404(User, pk=applicant_id)
+    transaction = Transaction.objects.get(session=session,
+                                          learner=applicant,
+                                          status='pending')
+    transaction.status = 'cancelled'
+    transaction.save()
+    messages.success(request, f"You have successfully cancelled "
+                              f"{applicant.username} in {session.session_name}.")
+    return redirect('session-detail', pk=session_id)
+
+
 def leave_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
-    if request.user in session.participants.all():
-        session.participants.remove(request.user)
+    transaction = Transaction.objects.get(session=session,
+                                          learner=request.user,
+                                          status='enrolled')
+    transaction.status = 'left'
+    transaction.save()
+    session.participants.remove(request.user)
+    messages.success(request, f"You have successfully left "
+                              f"{session.session_name}.")
     return redirect('session-detail', pk=pk)
