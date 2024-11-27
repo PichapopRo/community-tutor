@@ -13,6 +13,8 @@ from webpage.forms import SessionForm
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
+from django.db.models import Count
+from django.contrib.auth.models import User
 
 logger = logging.getLogger("Views.py")
 
@@ -133,6 +135,26 @@ def investor(request):
 
 class StatisticView(generic.TemplateView):
     template_name = 'statistics.html'
+    
+    def get_popular_tutor_name(self, number: int) -> list[str] | None:
+        tutors_with_participant_counts = (
+            User.objects
+            .annotate(total_participants=Count('joined_sessions'))
+        )
+        
+        top_tutor = tutors_with_participant_counts.order_by('-total_participants')[:number]
+        if top_tutor:
+            return [tutor.username for tutor in top_tutor]
+        else:
+            return None
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        NUMBER_OF_POPULAR_TUTORS = 5    
+        context =  super().get_context_data(**kwargs)
+        context["popular_tutors"] = self.get_popular_tutor_name(NUMBER_OF_POPULAR_TUTORS)
+        
+        
+        return context
 
 
 def join_session(request, pk):
