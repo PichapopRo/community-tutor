@@ -30,10 +30,10 @@
             <div class="card h-100 shadow">
                 <div class="card-body mt-3">
                     <h3 class="card-title">{{ session.session_name }}</h3>
-                    <small class="card-text">By: {{ session.tutor_id.username }}</small>
+                    <small class="card-text"><b>By:</b> {{ session.tutor_id.username }}</small>
                     <span class="badge badge-primary">{{ session.category }}</span>
                     <p>{{ session.start_date }} to {{ session.end_date }}</p>
-                    <p>at {{ session.location }} </p>
+                    <p><b>at</b> {{ session.location }} </p>
                     
                     <a href="{% url 'session-detail' session.id %}" class="stretched-link"></a>
                 </div>
