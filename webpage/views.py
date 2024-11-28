@@ -188,10 +188,6 @@ class StatisticView(generic.TemplateView):
         # Step 1: Annotate tutors with participant counts per category
         tutors_with_session_counts = User.objects.annotate(num_courses=Count('session'))
         tutors_with_sessions = tutors_with_session_counts.filter(num_courses__gt=0)
-        tutors_with_participant_counts = (
-            tutors_with_sessions
-            .annotate(total_participants=Count('session__participants'))
-        )
 
         # Step 2: Get top 5 tutors for each category
         top_tutors_per_category = {}
@@ -199,11 +195,11 @@ class StatisticView(generic.TemplateView):
         for category in Category.objects.all():
             # Filter tutors who have sessions in the current category
             tutors = (
-                tutors_with_participant_counts
+                tutors_with_sessions
                 .filter(session__category=category)
-                .order_by('-total_participants')[:5]  # Get top 5 tutors
+                .annotate(total_participants_new=Count('session__participants'))
+                .order_by('-total_participants_new')[:5]  # Get top 5 tutors
             )
-
             top_tutors_per_category[category.category_name] = list(tutors)
 
         return top_tutors_per_category
