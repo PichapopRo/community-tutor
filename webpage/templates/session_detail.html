@@ -7,7 +7,11 @@
   <!-- Details Section -->
   <div class="card bg-dark text-light mb-4">
     <div class="card-body">
-        <h2 class="mb-4"><strong>{{ session.session_name }}</strong></h2>
+        {% if session.is_full %}
+            <h2 class="mb-4 text-danger"><strong>{{ session.session_name }}</strong></h2>
+        {% else %}
+            <h2 class="mb-4 text-info"><strong>{{ session.session_name }}</strong></h2>
+        {% endif %}
         <p class="card-text">
             <span class="badge bg-info text-dark">{{ session.category }}</span>
             {% if session.fee == 0 %}
@@ -74,7 +78,7 @@
         </div>
       </div>
     {% else %}
-      <h5 class="text-primary mb-4"><strong><i class="bi bi-bag-x"></i> The session is full.</strong></h5>
+      <h5 class="text-info mb-4"><strong><i class="bi bi-bag-x"></i> The session is full.</strong></h5>
     {% endif %}
   {% else %}
     <div>
@@ -86,7 +90,7 @@
           <button type="submit" class="btn btn-danger"><strong>Leave Session</strong></button>
         </form>
           {% elif session.is_full %}
-                  <h5 class="text-primary mb-4"><strong><i class="bi bi-bag-x"></i> The session is full.</strong></h5>
+                  <h5 class="text-info mb-4"><strong><i class="bi bi-bag-x"></i> The session is full.</strong></h5>
       {% elif request.user in session.get_applicants %}
         <p class="text-danger mb-4"><strong><i class="bi bi-arrow-repeat"></i> You have applied for this session and are awaiting the approval.</strong></p>
       {% else %}

@@ -1,103 +1,150 @@
 {% extends 'base.html' %}
-{%  load static %}
+{% load static %}
 <link rel="stylesheet" href="{% static 'styles/style.css' %}">
-<body>
 {% block content %}
-    <div class="container mt-3 mx-3">
-    <h1 class="mx-auto">Statistics Page!</h1>
-    <div class="row">
-        <div class="col-md-12 col-xl-4">
-        <div class="card shadow h-100 my-3">
-            <h5 class="card-title mx-3 mt-3">Top 5 Most Popular Sessions</h5>
-                <ol>
-                {% if not popular_sessions %}
-                    <h3 class="card-label mx-3 ">Not Available</h3>
-                {% else %}
-                    {% for session in popular_sessions %}
-                        <li class="mx-3">
-                        <h6 class="card-label">{{ session.session_name }}  by: {{ session.tutor_id.username}}</h6>
-                        </li>
-                    {% endfor %}
-                </ol>
-                {% endif %}
+<div class="container mt-3 pb-5">
+  <h1 class="mb-4 text-light text-center"><strong>Statistics Dashboard</strong></h1>
+
+<!-- Statistics Cards -->
+<div class="row">
+  <!-- Top 5 Most Popular Sessions -->
+  <div class="col-md-12 col-xl-4 mb-4">
+    <div class="card bg-dark text-light shadow-lg h-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div class="text-center mb-4">
+          <i class="bi bi-bar-chart-fill text-warning fs-2"></i>
+          <h5 class="text-info mt-2"><strong>Top 5 Most Popular Sessions</strong></h5>
         </div>
+        <div class="list-container overflow-auto">
+          <ol class="mt-3 ps-3">
+            {% if not popular_sessions %}
+              <p class="text-info text-center">Not Available</p>
+            {% else %}
+              {% for session in popular_sessions %}
+                <li class="mb-2">
+                  <p class="mb-0"><strong>{{ session.session_name }}</strong> by: <span class="text-info">{{ session.tutor_id.username }}</span></p>
+                </li>
+              {% endfor %}
+            {% endif %}
+          </ol>
         </div>
-    <div class="col-md-12 col-xl-4">
-        <div class="card shadow h-100 my-3">
-            <h5 class="card-title mx-3 my-3">Top 5 Most Popular Tutor</h5>
-                <ol>
-                {% if not popular_tutors %}
-                    <h3 class="card-label mx-3 ">Not Available</h3>
-                {% else %}
-                    {% for tutor_name in popular_tutors %}
-                        <li class="mx-3">
-                        <h6 class="card-label">{{ tutor_name }}</h6>
-                        </li>
-                    {% endfor %}
-                    </ol>
-                {% endif %}
-        </div>
+      </div>
     </div>
-<div class="col-md-12 col-xl-4">
-        <div class="card shadow h-100 my-3">
-            <h5 class="card-title mx-3 my-3">Top 5 Most Popular Categories</h5>
-                <ol>
-                {% if not popular_categories %}
-                    <h3 class="card-label mx-3 ">Not Available</h3>
-                {% else %}
-                    {% for category_name in popular_categories %}
-                        <li>
-                        <h6 class="card-label mx-3 ">{{ category_name }}</h6>
-                        </li>
-                    {% endfor %}
-                </ol>
-                {% endif %}
+  </div>
+
+  <!-- Top 5 Most Popular Tutors -->
+  <div class="col-md-12 col-xl-4 mb-4">
+    <div class="card bg-dark text-light shadow-lg h-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div class="text-center mb-4">
+          <i class="bi bi-person-fill text-warning fs-2"></i>
+          <h5 class="text-info mt-2"><strong>Top 5 Most Popular Tutors</strong></h5>
         </div>
+        <div class="list-container overflow-auto">
+          <ol class="mt-3 ps-3">
+            {% if not popular_tutors %}
+              <p class="text-info text-center">Not Available</p>
+            {% else %}
+              {% for tutor_name in popular_tutors %}
+                <li class="mb-2">
+                  <p class="mb-0"><strong>{{ tutor_name }}</strong></p>
+                </li>
+              {% endfor %}
+            {% endif %}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top 5 Most Popular Categories -->
+  <div class="col-md-12 col-xl-4 mb-4">
+    <div class="card bg-dark text-light shadow-lg h-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div class="text-center mb-4">
+          <i class="bi bi-tags-fill text-warning fs-2"></i>
+          <h5 class="text-info mt-2"><strong>Top 5 Most Popular Categories</strong></h5>
+        </div>
+        <div class="list-container overflow-auto">
+          <ol class="mt-3 ps-3">
+            {% if not popular_categories %}
+              <p class="text-info text-center">Not Available</p>
+            {% else %}
+              {% for category_name in popular_categories %}
+                <li class="mb-2">
+                  <p class="mb-0"><strong>{{ category_name }}</strong></p>
+                </li>
+              {% endfor %}
+            {% endif %}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-    </div>
-    <div class="row d-flex">
-        <div class="col-lg-6 mt-3">
-            <div class="card shadow my-3">
-                <h5 class="card-title mx-3 my-3">Top 5 Most Popular People Per Category</h5>
-                {% for category_name, tutors in popular_per_category.items %}
-                    <h6 class="card-label mx-3 "><b>{{ category_name }}</b></h6>
-                    {% if tutors %}
-                        {% for tutor in tutors %}
-                            <h6 class="card-label mx-3 ">{{ tutor.username }} with {{ tutor.total_participants }} participants.</h6>
-                        {% endfor %}
-                    {% else %}
-                        <h6 class="card-label mx-3 ">None.</h6>
-                    {% endif %}
-                {% endfor %}
-            </div>
+
+
+  <!-- Additional Statistics -->
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card bg-dark text-light shadow h-100">
+        <div class="card-body">
+          <h5 class="text-info text-center"><strong><i class="bi bi-award text-info"></i> Top 5 Most Popular People Per Category</strong></h5>
+          {% if not popular_per_category %}
+            <p class="text-info text-center mt-3">Not Available</p>
+          {% else %}
+            {% for category_name, tutors in popular_per_category.items %}
+              <div class="mt-3">
+                <span class="badge bg-dark text-warning fs-6 py-1 px-3">{{ category_name }}</span>
+                {% if tutors %}
+                  {% for tutor in tutors %}
+                    <p class="mb-0 ps-3">• <strong class="text-info">{{ tutor.username }}</strong> with <strong>{{ tutor.total_participants }}</strong> participants</p>
+                  {% endfor %}
+                {% else %}
+                  <p class="text-info ps-3">None</p>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endif %}
         </div>
-        <div class="col-lg-6 mt-3">
-            <div class="row">
-                <div class="col-lg-6 mb-4">
-                    <div class="card shadow my-3 h-100">
-                        <h5 class="card-title mx-3 my-3">Average enrollment per user</h5>
-                        <h6 class="card-label mx-3 ">{{ avg_num_enroll }} course per person</h6>
-                    </div> 
-                </div>
-                <div class="col-lg-6 mb-4">   
-                    <div class="card shadow my-3 h-100">
-                        <h5 class="card-title mx-3 my-3">Average course per tutor</h5>
-                        <h6 class="card-label mx-3 ">{{ avg_course_per_tutor }} course per tutor</h6>
-                    </div> 
-                </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="col-lg-6 mb-4">
+          <div class="card bg-dark text-light shadow h-100">
+            <div class="card-body text-center">
+              <h5 class="text-info"><strong>Average Enrollment Per User <i class="bi bi-pencil-square text-danger"></i></strong></h5>
+              <p class="mb-0 display-6"><strong class="text-danger">{{ avg_num_enroll }}</strong> <small>courses per person</small></p>
             </div>
-            <div class="col-lg-12 mb-4">
-                <div class="card shadow my-3">
-                    <h5 class="card-title mx-3 my-3">Category that makes the most money</h5>
-                    {% if ctg_with_most_rev.total_money %}
-                        <h6 class="card-label mx-3 ">{{ ctg_with_most_rev.category_name }} : {{ ctg_with_most_rev.total_money }} Baht</h6>
-                    {% else %}
-                        <h6 class="card-label mx-3 "> No category </h6>
-                    {% endif %}
-                </div>
-            </div>
+          </div>
         </div>
+        <div class="col-lg-6 mb-4">
+          <div class="card bg-dark text-light shadow h-100">
+            <div class="card-body text-center">
+              <h5 class="text-info"><strong>Average Courses Per Tutor <i class="bi bi-book-half text-danger"></i></strong></h5>
+              <p class="mb-0 display-6"><strong class="text-danger">{{ avg_course_per_tutor }}</strong> <small>courses per tutor</small></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="card bg-dark text-light shadow h-100">
+            <div class="card-body text-center">
+              <h5 class="text-info"><strong>Most Profitable Category <i class="bi bi-cash-stack text-warning"></i></strong></h5>
+              {% if ctg_with_most_rev.total_money %}
+                <p class="display-6 text-warning mt-3">
+                  <strong>{{ ctg_with_most_rev.category_name }}</strong>
+                </p>
+                <p class="text-light"><strong>{{ ctg_with_most_rev.total_money }}</strong> ฿</p>
+              {% else %}
+                <p class="text-muted mt-3">No category</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    </div>
-</body>
+  </div>
+</div>
 {% endblock %}
