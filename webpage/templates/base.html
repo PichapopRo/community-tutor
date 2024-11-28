@@ -14,22 +14,13 @@
 <body style="background-color: rgb(33, 37, 41, 0.9) ;">
     <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand text-light">
-                <strong>Welcome to Local Tuition and Class,
-                    {% if user.is_authenticated %}
-                        {{ user.username }}!
-                    {% else %}
-                        Guest!
-                    {% endif %}
-                </strong>
-            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav">
                     <li class="nav-item mx-3">
-                        <a class="nav-link text-info" href="/local-tutor/">Home <i class="bi bi-house"></i></a>
+                        <b><a class="nav-link text-white navbar-brand mt-1" href="/local-tutor/">Local Tuition</a></b>
                     </li>
                     <li class="nav-item mx-3">
                         <a class="nav-link text-info" href="{% url 'statistics' %}">Statistics <i class="bi bi-bar-chart"></i></a>
@@ -39,16 +30,16 @@
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item mx-3">
-                            <a class="nav-link text-danger" href="{% url 'logout' %}">Logout <i class="bi bi-box-arrow-right"></i></a>
+                            <a class="nav-link text-danger me-auto position-absolute end-0" href="{% url 'logout' %}">Logout <i class="bi bi-box-arrow-right"></i></a>
                         </li>
                     {% else %}
                         <li class="nav-item mx-3">
-                            <a class="nav-link text-info" href="{% url 'login' %}">Login <i class="bi bi-box-arrow-in-right"></i></a>
+                            <a class="nav-link text-info me-auto position-absolute end-0" href="{% url 'login' %}">Login <i class="bi bi-box-arrow-in-right"></i></a>
                         </li>
-                    {% endif %}
-                    <li class="nav-item mx-3">
-                        <a class="nav-link text-info" href="{% url 'register' %}">Register <i class="bi bi-patch-plus"></i></a>
+                        <li class="nav-item mx-3">
+                        <a class="nav-link text-info me-auto position-absolute end-0" href="{% url 'register' %}">Register <i class="bi bi-patch-plus"></i></a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
