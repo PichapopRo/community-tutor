@@ -186,20 +186,17 @@ class StatisticView(generic.TemplateView):
             return None
         
     def get_top_5_of_each_category(self):
-        # Step 1: Annotate tutors with participant counts per category
         tutors_with_session_counts = User.objects.annotate(num_courses=Count('session'))
         tutors_with_sessions = tutors_with_session_counts.filter(num_courses__gt=0)
 
-        # Step 2: Get top 5 tutors for each category
         top_tutors_per_category = {}
 
         for category in Category.objects.all():
-            # Filter tutors who have sessions in the current category
             tutors = (
                 tutors_with_sessions
                 .filter(session__category=category)
                 .annotate(total_participants_new=Count('session__participants'))
-                .order_by('-total_participants_new')[:5]  # Get top 5 tutors
+                .order_by('-total_participants_new')[:5]
             )
             top_tutors_per_category[category.category_name] = list(tutors)
 
@@ -228,10 +225,8 @@ class StatisticView(generic.TemplateView):
     
     def get_age_range_of_each_category(self):
         """Get the age range of users in each every category."""
-        # Get today's date
         today_year = datetime.now().year
 
-        # Calculate age from date_of_birth
         age_query = UserInfo.objects.annotate(
             age=ExpressionWrapper(
                 today_year - ExtractYear('date_of_birth'),
@@ -261,6 +256,7 @@ class StatisticView(generic.TemplateView):
         return age_ranges
     
     def get_min_max_fee(self):
+        """Get the range of each categories"""
         categories = []
         for category in Category.objects.all():
             name = category.category_name
