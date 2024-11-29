@@ -143,6 +143,19 @@
             </div>
           </div>
         </div>
+        <div class="col-lg-12">
+          <div class="card bg-dark text-light shadow h-100">
+            <div class="card-body text-center">
+              <h5 class="text-info"><strong>Age range in each categories </strong></h5>
+              {% for category in age_range %}
+                <p class="display-6 text-warning mt-3">
+                  <strong>{{ category.category_name }}</strong>
+                </p>
+                <p class="text-light"><strong> min: {{ category.min_age }}, min: {{category.max_age}}</strong></p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

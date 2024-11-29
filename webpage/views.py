@@ -13,7 +13,8 @@ from webpage.forms import SessionForm
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
-from django.db.models import Count, OuterRef, Subquery, Avg, Q, Sum
+from django.db.models import Count, OuterRef, Subquery, Avg, Q, Sum, F, Min, Max, ExpressionWrapper, IntegerField
+from django.db.models.functions import ExtractYear
 from django.contrib.auth.models import User
 from typing import Iterable
 
@@ -224,7 +225,41 @@ class StatisticView(generic.TemplateView):
         top_categories = category_with_participant_counts.order_by('-total_money').first()
         
         return top_categories
+    
+    def get_age_range_of_each_category(self):
+        """Get the age range of users in each every category."""
+        # Get today's date
+        today_year = datetime.now().year
+
+        # Calculate age from date_of_birth
+        age_query = UserInfo.objects.annotate(
+            age=ExpressionWrapper(
+                today_year - ExtractYear('date_of_birth'),
+                output_field=IntegerField()
+            )
+        ).values('user_id', 'age')
         
+        age_ranges = []
+
+        for category in Category.objects.all():
+            min_age = age_query.filter(
+                    user_id__in=Transaction.objects.filter(session__category=category).values('learner_id')
+                ).order_by('age').first()
+            if min_age:
+                min_age = list(min_age.values())[-1]
+            max_age = age_query.filter(
+                    user_id__in=Transaction.objects.filter(session__category=category).values('learner_id')
+                ).order_by('-age').first()
+            if max_age:
+                max_age = list(max_age.values())[-1]
+            age_ranges.append({
+                "category_name": category.category_name,
+                "min_age": min_age,
+                "max_age": max_age
+            })
+
+        return age_ranges
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         NUMBER_OF_POPULAR_TUTORS = 5    
         context =  super().get_context_data(**kwargs)
@@ -235,6 +270,7 @@ class StatisticView(generic.TemplateView):
         context['avg_num_enroll'] = self.get_avg_enrollment_per_user()
         context['avg_course_per_tutor'] = self.get_avg_courses_per_tutor()
         context['ctg_with_most_rev'] = self.get_catagory_with_most_revenue()
+        context['age_range'] = self.get_age_range_of_each_category()
 
         return context
 
