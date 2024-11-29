@@ -259,6 +259,20 @@ class StatisticView(generic.TemplateView):
             })
 
         return age_ranges
+    
+    def get_min_max_fee(self):
+        categories = []
+        for category in Category.objects.all():
+            name = category.category_name
+            min_fee = Session.objects.filter(category=category).order_by('fee').first()
+            if min_fee:
+                min_fee = min_fee.fee
+            max_fee = Session.objects.filter(category=category).order_by('-fee').first()
+            if max_fee:
+                max_fee = max_fee.fee
+            categories.append({'name': name, 'min_fee': min_fee, 'max_fee': max_fee})
+        
+        return categories
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         NUMBER_OF_POPULAR_TUTORS = 5    
@@ -271,6 +285,7 @@ class StatisticView(generic.TemplateView):
         context['avg_course_per_tutor'] = self.get_avg_courses_per_tutor()
         context['ctg_with_most_rev'] = self.get_catagory_with_most_revenue()
         context['age_range'] = self.get_age_range_of_each_category()
+        context['fee_range'] = self.get_min_max_fee()
 
         return context
 
